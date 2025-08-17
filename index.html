@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nitin | Portfolio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&family=Crimson+Text:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Feather Icons (MIT) -->
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <!-- Loading Page -->
+  <div id="loadingPage" class="loading-page">
+    <svg class="loading-svg" viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet" aria-label="Nitin">
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="loading-stroke">NITIN</text>
+    </svg>
+  </div>
+
+  <div class="nav-system">
+    <h1 class="section-heading" id="sectionHeading"><span class="myName">Nitin</span></h1>
+    <nav class="nav-buttons" id="navButtons">
+      <button class="nav-btn active" data-section="heading">Say Hi</button>
+      <button class="nav-btn" data-section="codeSkills">Skills</button>
+      <button class="nav-btn" data-section="projects">Projects</button>
+      <button class="nav-btn" data-section="testimony">Testimony</button>
+      <button class="nav-btn" data-section="contact">Contact</button>
+    </nav>
+  </div>
+
+  <main id="viewport">
+    <!-- Heading -->
+    <section id="heading" class="panel">
+      <div class="content">
+        <h1 class="greeting">Hi <span class="wave">👋</span>, I am</h1>
+
+        <!-- SVG name stroke -->
+        <svg class="name-svg" viewBox="0 0 800 160" preserveAspectRatio="xMidYMid meet" aria-label="Nitin">
+          <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="name-stroke">NITIN</text>
+        </svg>
+
+        <h2 class="role-line">I am a <span id="dynamic-role"></span></h2>
+        <h4>Brief: I break things, learn fast, and ship cleaner than I found it. Lately prompt engineering has been a blast</h4>
+
+      </div>
+    </section>
+
+    <!-- Code Skills -->
+    <section id="codeSkills" class="panel">
+      <div class="content"> 
+        
+        <div class="skills-layout">
+          <!-- Left: 5-row grid of skills -->
+          <div id="skillGrid" class="skill-grid"></div>
+
+          <!-- Middle: Skills description box -->
+          <div class="skills-description" id="skillsDescription">
+            The standard markup language for creating web pages.
+          </div>
+
+          <!-- Right: vertical progress bar -->
+          <div class="vbar-panel">
+            <div class="vbar-wrap" id="vbarWrap">
+              <div class="vbar" id="vbar"></div>
+            </div>
+            <div class="vbar-label"><span id="vbar-skill">Click a skill</span> — <span id="vbar-value">0/10</span></div>
+          </div>
+        </div>
+        
+
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="panel">
+      <div class="bento-grid content" id="bentoGrid">
+        <!-- Projects will be dynamically generated here -->
+      </div>
+    </section>
+
+    <!-- Project Popup Modal -->
+    <div id="projectModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+        <div class="modal-languages">
+          <strong>Languages used:</strong>
+          <div id="modalLanguages"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Testimony -->
+    <section id="testimony" class="panel">
+      <div class="content">
+        <div class="testimonials-grid" id="testimonialsGrid"></div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="panel">
+      <div class="slidingGlobe"></div>
+      <div class="content">
+        <div class="contact-container">
+          <div class="contact-info">
+            <h4>Get in touch</h4>
+            <p>Ready to bring your ideas to life? Let's discuss your next project.</p>
+            
+            <div class="contact-methods">
+              <div class="contact-item">
+                <i data-feather="mail"></i>
+                <div>
+                  <span>Email</span>
+                  <a href="mailto:nitin@example.com">nitin.raj.25@gmail.com</a>
+                </div>
+              </div>
+              
+              <div class="contact-item">
+                <i data-feather="phone"></i>
+                <div>
+                  <span>Phone</span>
+                  <a href="">+91 799 385 12XX</a>
+                </div>
+              </div>
+              
+              <div class="contact-item">
+                <i data-feather="map-pin"></i>
+                <div>
+                  <span>Location</span>
+                  <span>Trivandrum, India</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="social-links">
+            <h4>Follow me</h4>
+            <div class="social-grid">
+              <a href="#" class="social-link">
+                <i data-feather="github"></i>
+                <span>GitHub</span>
+              </a>
+              <a href="#" class="social-link">
+                <i data-feather="linkedin"></i>
+                <span>LinkedIn</span>
+              </a>
+              <a href="#" class="social-link">
+                <i data-feather="twitter"></i>
+                <span>Twitter</span>
+              </a>
+              <a href="#" class="social-link">
+                <i data-feather="instagram"></i>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
