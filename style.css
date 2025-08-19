@@ -4,8 +4,8 @@
 
 /* Global — no scrollbar */
 * { box-sizing: border-box; }
-html, body { height: 100%; }
 html, body {
+  height: 100%;
   margin: 0; padding: 0; overflow: hidden;
   background: var(--primary-gradient);
   color: #f8fafc; font-family: 'Inter', 'Space Grotesk', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -69,8 +69,9 @@ html, body {
   position: fixed; top: 33%; left: 30px;
   font-size: clamp(24px, 4vw, 48px); font-weight: 700; color: #fff;
   margin: 0; pointer-events: auto; cursor: pointer;
-  text-shadow: 0 4px 20px rgba(147,51,234,0.3);
+  text-shadow: 0 0 20px rgba(147,51,234,1);
   writing-mode: vertical-rl; text-orientation: mixed;
+  font-family: "Iceberg", sans-serif;
 }
 
 .section-heading .letter {
@@ -99,6 +100,7 @@ html, body {
   position: relative; text-align: left; pointer-events: auto;
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
+  font-family: "Iceberg", sans-serif;
 }
 
 .nav-btn:hover {
@@ -162,7 +164,7 @@ html, body {
   filter: drop-shadow(0 4px 4px rgba(147,51,234,1));
 }
 .role-line { font-size: clamp(18px, 2.2vw, 28px); font-weight: 300; text-shadow: 0 0 4px rgba(147,51,234,1); position: relative; top: 65px;}
-#dynamic-role { font-weight: 700; color: #9333ea; border-right: 2px solid rgba(147,51,234,0.8); padding-right: 4px; -webkit-text-stroke: 0.75px #fff;}
+#dynamic-role { font-family: "Iceberg", sans-serif; font-weight: 700; color: #9333ea; border-right: 2px solid rgba(147,51,234,0.8); padding-right: 4px; -webkit-text-stroke: 0.75px #fff;}
 
 /* Skills layout */
 .skills-layout {
@@ -191,7 +193,7 @@ html, body {
   align-items: center;
   gap: 20px;
   will-change: transform, background, border-color;
-  font-family: 'Inter', sans-serif;
+  font-family: "Iceberg", sans-serif;
   font-weight: 500;
 }
 .skill-grid button:hover { transform: translateY(-2px); background: rgba(147,51,234,0.15); border-color: rgba(147,51,234,0.4); }
@@ -217,10 +219,17 @@ html, body {
   font-family: 'Inter', sans-serif;
 }
 
-@media (min-width: 768px) and (max-width: 1000px) {
+@media (min-width: 973px) and (max-width: 1360px) {
+  .skills-description {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 973px) {
   .skills-description {
     font-size: 12px;
-    line-height: 1.8;
+    line-height: 1.6;
   }
 }
 
@@ -274,7 +283,7 @@ html, body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  font-family: 'Inter', sans-serif;
+  font-family: "Iceberg", sans-serif;
 }
 .bento-item.large {
   grid-column: span 2;
@@ -557,7 +566,7 @@ html, body {
   text-decoration: none;
   transition: all 0.3s ease;
   transform: translateY(30px); filter: blur(1px);
-  font-family: 'Inter', sans-serif;
+  font-family: "Iceberg", sans-serif;
 }
 .social-link:hover {
   transform: translateY(-2px);
@@ -752,8 +761,8 @@ body::before {
 
   #heading .content {
     width: 80%;
-    background-size: 100%;
-    background-position: center top;
+    background-size: 80%;
+    background-position: 75% 60%;
   }
 
   /* Skills Layout - Mobile */
@@ -940,6 +949,7 @@ body::before {
   /* Typography adjustments for mobile */
   .greeting {
     font-size: 20px;
+    color: #c4b5fd;
   }
 
   .name-svg {
