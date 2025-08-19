@@ -27,6 +27,9 @@ let touchStartY = 0;
 
 let originalPositions = new Map();
 
+// Scroll control state
+let isScrollDisabled = false;
+
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
@@ -279,12 +282,10 @@ function goToSection(target) {
       updateNavButtons();
 
       // Stop animations from previous section
-      if (prevSectionId === 'projects') stopProjectsAnimation();
       if (prevSectionId === 'testimony') stopTestimonialsSlider();
 
       // Start animations for current section
       const currentSectionId = sections[current].id;
-      if (currentSectionId === 'projects') startProjectsAnimation();
       if (currentSectionId === 'testimony') animateTestimonialsIn();
       if (currentSectionId === 'contact') animateContactIn();
     }
@@ -365,7 +366,10 @@ function initHeading() {
 // Mouse wheel navigation
 function onWheel(e) {
   e.preventDefault();
-  if (isAnimating) return;
+  if (isAnimating || isScrollDisabled) {
+    console.log('Scroll blocked:', { isAnimating, isScrollDisabled });
+    return;
+  }
   const dir = Math.sign(e.deltaY);
   if (dir > 0) goToSection(current + 1);
   else if (dir < 0) goToSection(current - 1);
@@ -373,16 +377,16 @@ function onWheel(e) {
 
 // Keyboard navigation
 addEventListener('keydown', (e) => {
-  if (isAnimating) return;
+  if (isAnimating || isScrollDisabled) return;
   if (e.key === 'ArrowDown' || e.key === 'PageDown') goToSection(current + 1);
   if (e.key === 'ArrowUp' || e.key === 'PageUp') goToSection(current - 1);
 });
 
 // Touch navigation
 addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
-addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+addEventListener('touchmove', (e) => { if (!isScrollDisabled) e.preventDefault(); }, { passive: false });
 addEventListener('touchend', (e) => {
-  if (isAnimating) return;
+  if (isAnimating || isScrollDisabled) return;
   const dy = e.changedTouches[0].clientY - touchStartY;
   const threshold = 40;
   if (dy < -threshold) goToSection(current + 1);
@@ -515,10 +519,19 @@ skills.forEach(s => {
       vbar.style.background = 'linear-gradient(180deg, #6b7280, #4b5563)';
     }
 
-    vbar.style.height = '0%';
-    requestAnimationFrame(() => {
-      vbar.style.height = `${pct}%`;
-    });
+    if (window.innerWidth <= 768) {
+      vbar.style.height = '100%';
+      vbar.style.width = '0%';
+      requestAnimationFrame(() => {
+        vbar.style.width = `${pct}%`;
+      });
+    } else {
+      vbar.style.width = 'auto';
+      vbar.style.height = '0%';
+      requestAnimationFrame(() => {
+        vbar.style.height = `${pct}%`;
+      });
+    }
     
     // Change background only if different
     if (s.bg !== currentBackground) {
@@ -679,6 +692,10 @@ projects.forEach((project, index) => {
     
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    
+    // Disable page scrolling
+    isScrollDisabled = true;
+    console.log('Modal opened, scroll disabled:', isScrollDisabled);
   });
   
   bentoGrid.appendChild(bentoItem);
@@ -688,6 +705,10 @@ projects.forEach((project, index) => {
 function closeProjectModal() {
   modal.style.display = 'none';
   document.body.style.overflow = '';
+  
+  // Re-enable page scrolling
+  isScrollDisabled = false;
+  console.log('Modal closed, scroll enabled:', !isScrollDisabled);
 }
 
 closeModal.addEventListener('click', closeProjectModal);
@@ -704,6 +725,8 @@ document.addEventListener('keydown', (event) => {
     closeProjectModal();
   }
 });
+
+
 
 // TESTIMONIALS SECTION: Slider with fade transitions
 let testimonyInterval;
@@ -859,8 +882,9 @@ function animateContactIn() {
       ease: 'back.out(1.5)'
     }
   );
- 
 }
+
+
 
 // ============================================================================
 // INITIALIZATION & EVENT LISTENERS
@@ -881,6 +905,211 @@ function hideLoadingPage() {
   }, hideDelay);
 }
 
+// ============================================================================
+// MOBILE RESPONSIVE FUNCTIONS
+// ============================================================================
+
+// Mobile state variables
+let isMobile = window.innerWidth <= 768;
+let currentSlide = 0;
+let projectsData = projects;
+
+// Check if device is mobile
+function checkMobile() {
+  isMobile = window.innerWidth <= 768;
+  updateLayoutForDevice();
+}
+
+// Update layout based on device
+function updateLayoutForDevice() {
+  if (isMobile) {
+    initMobileFeatures();
+  } else {
+    removeMobileFeatures();
+  }
+}
+
+// Initialize mobile-specific features
+function initMobileFeatures() {
+  const burgerMenu = document.getElementById('burgerMenu');
+  if (burgerMenu) burgerMenu.style.display = 'flex';
+  
+  initBurgerMenu();
+  initSkillsDropdown();
+  initProjectsSlider();
+}
+
+// Remove mobile features for desktop
+function removeMobileFeatures() {
+  const burgerMenu = document.getElementById('burgerMenu');
+  const navButtons = document.getElementById('navButtons');
+  const skillsDropdownContent = document.getElementById('skillsDropdownContent');
+  
+  if (burgerMenu) burgerMenu.style.display = 'none';
+  if (navButtons) {
+    navButtons.classList.remove('active');
+    navButtons.style.display = 'flex';
+  }
+  if (skillsDropdownContent) {
+    skillsDropdownContent.classList.remove('active');
+  }
+}
+
+// Burger menu functionality
+function initBurgerMenu() {
+  const burgerMenu = document.getElementById('burgerMenu');
+  const navButtons = document.getElementById('navButtons');
+  
+  if (!burgerMenu || !navButtons) return;
+  
+  burgerMenu.addEventListener('click', () => {
+    burgerMenu.classList.toggle('active');
+    navButtons.classList.toggle('active');
+  });
+  
+  // Close menu when clicking nav items
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (isMobile) {
+        burgerMenu.classList.remove('active');
+        navButtons.classList.remove('active');
+      }
+    });
+  });
+}
+
+// Skills dropdown functionality
+function initSkillsDropdown() {
+  const skillsDropdownToggle = document.getElementById('skillsDropdownToggle');
+  const skillsDropdownContent = document.getElementById('skillsDropdownContent');
+  
+  if (!skillsDropdownToggle || !skillsDropdownContent) return;
+  
+  skillsDropdownToggle.addEventListener('click', () => {
+    skillsDropdownContent.classList.toggle('active');
+    const arrow = skillsDropdownToggle.querySelector('span:last-child');
+    arrow.textContent = skillsDropdownContent.classList.contains('active') ? '▲' : '▼';
+    
+    // Control page scrolling
+    isScrollDisabled = skillsDropdownContent.classList.contains('active');
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.skills-dropdown')) {
+      skillsDropdownContent.classList.remove('active');
+      const arrow = skillsDropdownToggle.querySelector('span:last-child');
+      if (arrow) arrow.textContent = '▼';
+      
+      // Re-enable page scrolling
+      isScrollDisabled = false;
+    }
+  });
+  
+  // Update dropdown toggle text when skill is selected
+  const skillButtons = skillGrid.querySelectorAll('button');
+  skillButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const skillName = btn.textContent.trim();
+      const toggleText = skillsDropdownToggle.querySelector('span:first-child');
+      toggleText.textContent = skillName;
+      skillsDropdownContent.classList.remove('active');
+      const arrow = skillsDropdownToggle.querySelector('span:last-child');
+      arrow.textContent = '▼';
+      
+      // Re-enable page scrolling
+      isScrollDisabled = false;
+    });
+  });
+}
+
+// Projects slider functionality
+function initProjectsSlider() {
+  if (!isMobile) return;
+  
+  const sliderContainer = document.getElementById('projectsSliderContainer');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  
+  if (!sliderContainer || !prevBtn || !nextBtn) return;
+  
+  createMobileSlider();
+  
+  prevBtn.addEventListener('click', () => {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlider();
+    }
+  });
+  
+  nextBtn.addEventListener('click', () => {
+    if (currentSlide < projectsData.length - 1) {
+      currentSlide++;
+      updateSlider();
+    }
+  });
+}
+
+function createMobileSlider() {
+  const sliderContainer = document.getElementById('projectsSliderContainer');
+  const sliderDots = document.getElementById('sliderDots');
+  
+  if (!sliderContainer || !projectsData.length) return;
+  
+  sliderContainer.innerHTML = '';
+  sliderDots.innerHTML = '';
+  
+  projectsData.forEach((project, index) => {
+    const slide = document.createElement('div');
+    slide.className = 'project-slide';
+    slide.style.backgroundImage = `url('${project.img}')`;
+    slide.innerHTML = `<div class="title">${project.Name}</div>`;
+    slide.addEventListener('click', () => openProjectModal(project));
+    sliderContainer.appendChild(slide);
+    
+    const dot = document.createElement('div');
+    dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
+    dot.addEventListener('click', () => {
+      currentSlide = index;
+      updateSlider();
+    });
+    sliderDots.appendChild(dot);
+  });
+}
+
+function updateSlider() {
+  const sliderContainer = document.getElementById('projectsSliderContainer');
+  const dots = document.querySelectorAll('.slider-dot');
+  
+  if (!sliderContainer) return;
+  
+  const slideWidth = 460;
+  sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+  
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === currentSlide);
+  });
+}
+
+function openProjectModal(project) {
+  modalTitle.textContent = project.Name;
+  modalDescription.textContent = project.pDec;
+  
+  modalLanguages.innerHTML = '';
+  project.Languages.forEach(lang => {
+    const langSpan = document.createElement('span');
+    langSpan.textContent = lang;
+    modalLanguages.appendChild(langSpan);
+  });
+  
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  
+  // Disable page scrolling
+  isScrollDisabled = true;
+  console.log('Modal opened (mobile), scroll disabled:', isScrollDisabled);
+}
+
 // Initialize positions after DOM load
 document.addEventListener('DOMContentLoaded', () => {
   hideLoadingPage();
@@ -890,10 +1119,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeading();
   updateNavButtons();
   initializeSkills();
+  
+  // Initialize mobile features
+  checkMobile();
 
   // Set up event listeners
   addEventListener('wheel', onWheel, { passive: false });
   addEventListener('resize', () => {
+    checkMobile();
     contents.forEach((el, i) => {
       if (i !== current) {
         const dir = sectionDirection(i);

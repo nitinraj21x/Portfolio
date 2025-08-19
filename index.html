@@ -25,6 +25,11 @@
 
   <div class="nav-system">
     <h1 class="section-heading" id="sectionHeading"><span class="myName">Nitin</span></h1>
+    <div class="burger-menu" id="burgerMenu">
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+    </div>
     <nav class="nav-buttons" id="navButtons">
       <button class="nav-btn active" data-section="heading">Say Hi</button>
       <button class="nav-btn" data-section="codeSkills">Skills</button>
@@ -79,8 +84,22 @@
 
     <!-- Projects -->
     <section id="projects" class="panel">
-      <div class="bento-grid content" id="bentoGrid">
-        <!-- Projects will be dynamically generated here -->
+      <div class="content">
+        <div class="bento-grid" id="bentoGrid">
+          <!-- Projects will be dynamically generated here -->
+        </div>
+        <div class="projects-slider" id="projectsSlider">
+          <div class="projects-slider-container" id="projectsSliderContainer">
+            <!-- Mobile slider projects will be generated here -->
+          </div>
+          <div class="slider-controls">
+            <button class="slider-btn" id="prevBtn">‹</button>
+            <button class="slider-btn" id="nextBtn">›</button>
+          </div>
+          <div class="slider-dots" id="sliderDots">
+            <!-- Dots will be generated dynamically -->
+          </div>
+        </div>
       </div>
     </section>
 
