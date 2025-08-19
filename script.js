@@ -281,9 +281,6 @@ function goToSection(target) {
       isAnimating = false;
       updateNavButtons();
 
-      // Stop animations from previous section
-      if (prevSectionId === 'testimony') stopTestimonialsSlider();
-
       // Start animations for current section
       const currentSectionId = sections[current].id;
       if (currentSectionId === 'testimony') animateTestimonialsIn();
@@ -294,7 +291,7 @@ function goToSection(target) {
   // Animation sequence: randomize → move sections → restore
   tl.add(animateChildrenToRandom(outEl), 0);
   tl.to(outEl, {
-    x: outTo.x, y: outTo.y, opacity: 0, filter: 'blur(10px) contrast(0.9)',
+    x: outTo.x, y: outTo.y, opacity: 0, filter: 'blur(10px)',
     duration: 0.4
   }, 0.1);
   tl.to(inEl, {
@@ -413,7 +410,7 @@ navBtns.forEach((btn) => {
 gsap.to('.name-stroke', { strokeDashoffset: 0, duration: 7.5, ease: 'power3.out', delay: 0.3 });
 
 // Typing animation control variables
-const roles = ["Problem Solver", "Bored", "Tech Enthusiast", "Web Designer", "Human Male", "UI Designer", "Graduate"];
+const roles = ["Problem Solver", "Bored", "Tech Enthusiast", "Web Designer", "Human", "UI Designer", "Graduate", "Team Player"];
 const roleSpan = document.getElementById('dynamic-role');
 const TYPING_SPEED = 60;
 const DELETE_SPEED = 30;
@@ -567,88 +564,88 @@ const projects = [
     "Name": "Automated Speed Governor Using RFiD",
     "img": "bg/img1.jpg",
     "Languages": ["C++", "Arduino", "Embedded C"],
-    "pDec": "Developed a prototype for an automated speed governor system using RFID technology. The system controls vehicle speed by reading data from RFID tags placed on the road, automatically adjusting the vehicle's speed to comply with posted limits."
+    "pDec": "Developed a prototype for an automated speed governor system using RFID technology during college. The system controls vehicle speed by reading data from RFID tags placed on the road, automatically adjusting the vehicle's speed(among others) to comply with posted limits."
   },
   {
-    "Name": "3D Globe",
+    "Name": "Reusable 3D Backgrounds",
     "img": "bg/img2.jpg",
-    "Languages": ["JavaScript", "WebGL", "Three.js"],
-    "pDec": "Created an interactive 3D globe visualization. The project uses Three.js to render a rotatable sphere with dynamically loaded textures and interactive markers, showcasing real-time data or geographical information."
+    "Languages": ["JavaScript", "WebGL", "Three.js", "gsap"],
+    "pDec": "Created few interactive 3D backgrounds...few that cant be interacted with... and a few just good old 2D animations."
   },
   {
-    "Name": "Kerala Tourism Website",
+    "Name": "My Tourism Website",
     "img": "bg/img3.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "PHP", "SQL", "jQuery"],
-    "pDec": "Designed and developed a comprehensive tourism website for Kerala. The site features dynamic content management with PHP, a SQL database for storing tourist information, and an interactive front-end using JavaScript and jQuery to enhance user experience."
+    "pDec": "Designed and developed a comprehensive tourism website. The site features dynamic content management with PHP, a SQL database for storing hotel information and queries, and an interactive front-end using JavaScript and jQuery to enhance user experience."
   },
   {
-    "Name": "Dota 2 Website",
+    "Name": "Fan-made Dota 2 Website",
     "img": "bg/img4.jpg",
     "Languages": ["HTML", "CSS", "JavaScript"],
-    "pDec": "A fan-made website for the popular game, Dota 2. The site features character information, game updates, and community guides, built with a focus on clean, responsive design using pure HTML, CSS, and JavaScript."
+    "pDec": "Just another fan-made website for the popular game, Dota 2. Design achieved using pure HTML, CSS, and JavaScript."
   },
   {
-    "Name": "LED Backlighting System",
+    "Name": "Gaming Lounge Website - Wild Gaming Cafe",
     "img": "bg/img5.jpg",
-    "Languages": ["C++"],
-    "pDec": "A custom backlighting system for monitors and TVs. The system uses a microcontroller to analyze screen colors and project synchronized ambient light, enhancing the viewing experience for movies and games."
+    "Languages": ["React, JavaScript, ParticleJs"],
+    "pDec": "A custom made website for a Gaming Cafe. Made with lots of unnecessary but fun animations and a team"
   },
   {
     "Name": "Content Scrapper Extension",
     "img": "bg/img6.jpg",
     "Languages": ["JavaScript"],
-    "pDec": "Built a browser extension that scrapes specific content from websites. The tool automates the extraction of data, and helps in collecting information from multiple web pages efficiently."
+    "pDec": "Built a browser extension that scrapes specific content from a specific website. The tool automates the extraction of data upon detecting the required page, and stores data as json."
   },
   {
     "Name": "Graphic Designs",
     "img": "bg/img7.jpg",
     "Languages": ["Adobe Photoshop", "Adobe Illustrator"],
-    "pDec": "A collection of graphic design work including logos, posters, and digital illustrations created for various clients and personal projects using Adobe Photoshop and Illustrator."
+    "pDec": "A collection of graphic design work including logos, posters, and digital illustrations created for personal projects using Adobe Photoshop and Illustrator."
   },
   {
     "Name": "Photo Edits",
     "img": "bg/img8.jpg",
-    "Languages": ["Adobe Photoshop"],
-    "pDec": "A portfolio of photo editing and manipulation projects. These edits focus on color correction, retouching, and creating composite images to achieve a professional and artistic look."
+    "Languages": ["Adobe Photoshop", "MatLab"],
+    "pDec": "A portfolio of photo editing and manipulation projects. These edits focus on color correction, retouching, edge detection etc."
   },
   {
     "Name": "Snake Game",
     "img": "bg/img9.jpg",
     "Languages": ["Javascript"],
-    "pDec": "A classic Snake game created as a web-based application. The game features a dynamic grid, responsive controls, and score tracking, all built using vanilla JavaScript."
+    "pDec": "A classic Snake game created as a web-based application. "
   },
   {
     "Name": "Generic Website",
     "img": "bg/img10.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "React", "React-bits", "Framer-Motion"],
-    "pDec": "A modern, generic website template built using React for a component-based architecture. It incorporates Framer Motion for smooth animations and transitions, showcasing best practices in front-end development."
+    "pDec": "A modern, generic website template built using React for a component-based architecture. Framer Motion for smooth animations and transitions and React-bits for few animations."
   },
   {
     "Name": "Function Modules",
     "img": "bg/img11.jpg",
     "Languages": ["JavaScript", "React"],
-    "pDec": "A collection of reusable function modules and React components. These modules are designed to solve common programming problems and can be easily integrated into other projects to save development time."
+    "pDec": "A collection of reusable function modules and React components. Most components and modules are related to animations and transitions."
   },
   {
-    "Name": "E-commerce Website",
+    "Name": "My E-commerce Website",
     "img": "bg/img12.jpg",
     "Languages": ["Node.js", "Express", "MongoDB", "React"],
-    "pDec": "A full-stack e-commerce platform. The project features a REST API built with Node.js and Express, a MongoDB database for product and user data, and a dynamic front-end using React."
+    "pDec": "Attempt at building a E-commerce Website. Ongoing"
   },
   {
-    "Name": "Dashboard",
+    "Name": "Generic Dashboard",
     "img": "bg/img13.jpg",
-    "Languages": ["HTML", "SASS", "JavaScript"],
-    "pDec": "A data visualization dashboard. The interface is built with responsive HTML, styled with SASS, and uses JavaScript to fetch and display data in an intuitive and organized manner."
+    "Languages": ["HTML", "SASS", "JavaScript", "Chart.js"],
+    "pDec": "A normal dashboard with charts and bulletin"
   },
   {
-    "Name": "Portfolio Website",
+    "Name": "My Portfolio Website",
     "img": "bg/img14.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "GSAP"],
-    "pDec": "A personal portfolio website showcasing projects and skills. Built with modern web technologies and enhanced with GSAP animations for smooth, engaging user interactions."
+    "pDec": "A personal portfolio website showcasing projects and skills. Built with GSAP animations for smooth, engaging user interactions."
   },
   {
-    "Name": "Blog",
+    "Name": "My Blog",
     "img": "bg/img15.jpg",
     "Languages": ["HTML", "CSS", "JavaScript"],
     "pDec": "A simple blog platform with a modern, minimalist design. The front-end is built with pure HTML, CSS, and JavaScript, focusing on readability and a smooth user experience."
@@ -728,8 +725,7 @@ document.addEventListener('keydown', (event) => {
 
 
 
-// TESTIMONIALS SECTION: Slider with fade transitions
-let testimonyInterval;
+// TESTIMONIALS SECTION: Manual slider with user controls
 let currentTestimonyIndex = 0;
 
 const testimony = [
@@ -835,30 +831,35 @@ function updateTestimonials() {
   
   gsap.to(grid, {
     opacity: 0,
-    duration: 0.5,
+    duration: 0.3,
     onComplete: () => {
       grid.innerHTML = currentTestimonials.map(createTestimonialCard).join('');
-      gsap.to(grid, { opacity: 1, duration: 0.5 });
+      gsap.to(grid, { opacity: 1, duration: 0.3 });
     }
   });
-  
+}
+
+function nextTestimonials() {
   currentTestimonyIndex = (currentTestimonyIndex + 3) % testimony.length;
-}
-
-function startTestimonialsSlider() {
   updateTestimonials();
-  testimonyInterval = setInterval(updateTestimonials, 4000);
 }
 
-function stopTestimonialsSlider() {
-  if (testimonyInterval) {
-    clearInterval(testimonyInterval);
-    testimonyInterval = null;
-  }
+function prevTestimonials() {
+  currentTestimonyIndex = (currentTestimonyIndex - 3 + testimony.length) % testimony.length;
+  updateTestimonials();
+}
+
+function initTestimonialsControls() {
+  const prevBtn = document.getElementById('testimonyPrevBtn');
+  const nextBtn = document.getElementById('testimonyNextBtn');
+  
+  if (prevBtn) prevBtn.addEventListener('click', prevTestimonials);
+  if (nextBtn) nextBtn.addEventListener('click', nextTestimonials);
 }
 
 function animateTestimonialsIn() {
-  startTestimonialsSlider();
+  updateTestimonials();
+  initTestimonialsControls();
 }
 
 // CONTACT SECTION: Animate contact elements

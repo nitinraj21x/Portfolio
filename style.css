@@ -8,7 +8,7 @@ html, body { height: 100%; }
 html, body {
   margin: 0; padding: 0; overflow: hidden;
   background: var(--primary-gradient);
-  color: #eef; font-family: 'Space Grotesk', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: #f8fafc; font-family: 'Inter', 'Space Grotesk', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Loading Page */
@@ -143,7 +143,7 @@ html, body {
 }
 /* Section Backgrounds */
 #heading .content {
-  background-image: url('bg/profileBG.png');
+  background-image: url('bg/profileBg.png');
   background-position: center;
   background-repeat: no-repeat;
   gap: 50px;
@@ -184,13 +184,15 @@ html, body {
   padding: 15px 30px;
   border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.04);
-  color: #e8ecff; cursor: pointer;
+  color: #f1f5f9; cursor: pointer;
   transition: transform .12s ease, background .25s ease, border-color .25s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 20px;
   will-change: transform, background, border-color;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
 }
 .skill-grid button:hover { transform: translateY(-2px); background: rgba(147,51,234,0.15); border-color: rgba(147,51,234,0.4); }
 .skill-grid button.active { background: rgba(147,51,234,0.2); border-color: rgba(147,51,234,0.5); }
@@ -206,12 +208,20 @@ html, body {
   border: 1px solid rgba(147,51,234,0.3);
   border-radius: 12px;
   padding: 24px;
-  color: #e9ecff;
+  color: #f1f5f9;
   font-size: 20px;
   line-height: 2.25;
   backdrop-filter: blur(10px);
   align-self: start;
   height: 350px;
+  font-family: 'Inter', sans-serif;
+}
+
+@media (min-width: 768px) and (max-width: 1000px) {
+  .skills-description {
+    font-size: 12px;
+    line-height: 1.8;
+  }
 }
 
 /* Vertical progress bar panel */
@@ -228,7 +238,7 @@ html, body {
   transition: height .85s cubic-bezier(.22,.61,.36,1), background .3s ease;
   will-change: height, background;
 }
-.vbar-label { font-size: 13px; color: #e9ecff; opacity: 0.9; }
+.vbar-label { font-size: 13px; color: #f1f5f9; opacity: 0.9; font-family: 'JetBrains Mono', monospace; }
 
 /* Bento Grid Projects */
 .bento-container {
@@ -250,7 +260,7 @@ html, body {
   background: linear-gradient(135deg, rgba(147,51,234,0.08), rgba(255,255,255,0.03));
   border: 1px solid rgba(147,51,234,0.15);
   border-radius: 12px;
-  color: #e9ecff;
+  color: #f8fafc;
   font-weight: 600;
   font-size: 14px;
   display: flex;
@@ -264,6 +274,7 @@ html, body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  font-family: 'Inter', sans-serif;
 }
 .bento-item.large {
   grid-column: span 2;
@@ -307,12 +318,13 @@ html, body {
   margin: 10% auto;
   padding: 30px;
   width: min(500px, 90vw);
-  color: #e9ecff;
+  color: #f1f5f9;
   position: relative;
   box-shadow: 0 20px 60px rgba(147,51,234,0.3);
   max-height: 80vh;
   overflow-y: auto;
   overscroll-behavior: contain;
+  font-family: 'Inter', sans-serif;
 }
 .close {
   color: #c4b5fd;
@@ -357,26 +369,62 @@ html, body {
   border-radius: 20px;
   padding: 6px 12px;
   font-size: 12px;
-  color: #e9ecff;
+  color: #f1f5f9;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* Testimonials */
+#testimony .content > h2{
+  position: absolute;
+  top: 10%;
+}
+
+.testimonials-container {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  width: min(1200px, 95vw);
+  position: relative;
+  top: -100px;
+}
 .testimonials-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 50px;
-  width: min(1000px, 90vw);
-  position: relative;
-  top: -100px;
+  flex: 1;
+}
+.testimony-nav-btn {
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(147,51,234,0.3);
+  background: rgba(147,51,234,0.1);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+.testimony-nav-btn:hover {
+  background: rgba(147,51,234,0.2);
+  border-color: rgba(147,51,234,0.5);
+  transform: scale(1.1);
+}
+.testimony-nav-btn:active {
+  transform: scale(0.95);
 }
 .testimonial-card {
   background: linear-gradient(135deg, rgba(147,51,234,0.08), rgba(255,255,255,0.03));
   border: 1px solid rgba(147,51,234,0.15);
   border-radius: 20px;
   padding: 24px;
-  color: #f3f6ff;
+  color: #f8fafc;
   box-shadow: 0 0 8px 4px rgba(147,51,234,0.1);
   transform: translateY(30px);
+  font-family: 'Inter', sans-serif;
 }
 .testimonial-header {
   display: flex;
@@ -442,16 +490,19 @@ html, body {
   }
 }
 .contact-info h4, .social-links h4 {
-  color: #fff;
+  color: #f8fafc;
   font-size: 20px;
   margin: 0 0 16px 0;
   font-weight: 600;
+  font-family: 'Inter', sans-serif;
 }
-.contact-info p {
+#contact .content > p {
   color: #c4b5fd;
   font-size: 16px;
   line-height: 1.6;
   margin: 0 0 32px 0;
+  position: absolute;
+  top: 10%;
 }
 .contact-methods {
   display: flex;
@@ -480,10 +531,11 @@ html, body {
   font-weight: 500;
 }
 .contact-item a, .contact-item span:last-child {
-  color: #fff;
+  color: #f8fafc;
   text-decoration: none;
   font-size: 16px;
   transition: color 0.3s ease;
+  font-family: 'Inter', sans-serif;
 }
 .contact-item a:hover {
   color: #9333ea;
@@ -501,10 +553,11 @@ html, body {
   background: linear-gradient(135deg, rgba(147,51,234,0.08), rgba(255,255,255,0.03));
   border: 1px solid rgba(147,51,234,0.15);
   border-radius: 12px;
-  color: #e9ecff;
+  color: #f1f5f9;
   text-decoration: none;
   transition: all 0.3s ease;
   transform: translateY(30px); filter: blur(1px);
+  font-family: 'Inter', sans-serif;
 }
 .social-link:hover {
   transform: translateY(-2px);
@@ -921,10 +974,24 @@ body::before {
   }
 
   /* Testimonials - Mobile */
+  .testimonials-container {
+    flex-direction: column;
+    gap: 20px;
+    width: 95vw;
+  }
   .testimonials-grid {
     grid-template-columns: 1fr;
     gap: 24px;
-    width: 90vw;
+    width: 100%;
+  }
+  .testimony-nav-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  .testimonials-container {
+    flex-direction: row;
+    gap: 15px;
   }
 
   /* Modal - Mobile */
