@@ -1083,8 +1083,8 @@ function updateSlider() {
   const dots = document.querySelectorAll('.slider-dot');
   
   if (!sliderContainer) return;
-  
-  const slideWidth = 460;
+  const slideWidth = 0.84 * window.innerWidth;
+  console.log(slideWidth);
   sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
   
   dots.forEach((dot, index) => {
