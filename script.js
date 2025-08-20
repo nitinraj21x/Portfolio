@@ -3,15 +3,16 @@
 // ============================================================================
 
 // Core navigation state
-const sections = Array.from(document.querySelectorAll('.panel'));
+const sections = [...document.querySelectorAll('.panel')];
 const contents = sections.map(s => s.querySelector('.content'));
 let current = 0;
 let isAnimating = false;
 
 // Navigation elements
-const navBtns = Array.from(document.querySelectorAll('.nav-btn'));
+const navBtns = [...document.querySelectorAll('.nav-btn')];
 const sectionHeading = document.getElementById('sectionHeading');
 const navButtons = document.getElementById('navButtons');
+const scrollIndicator = document.getElementById('indicators');
 
 // Section names mapping
 const sectionNames = {
@@ -25,10 +26,11 @@ const sectionNames = {
 // Touch navigation
 let touchStartY = 0;
 
-let originalPositions = new Map();
-
 // Scroll control state
 let isScrollDisabled = false;
+
+// Globe animation reference
+let globeAnimation = null;
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -36,7 +38,13 @@ let isScrollDisabled = false;
 
 // Icon rendering - Initialize Feather icons
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.feather) window.feather.replace();
+  if (window.feather && typeof window.feather.replace === 'function') {
+    try {
+      window.feather.replace();
+    } catch (error) {
+      console.warn('Feather icons failed to initialize:', error);
+    }
+  }
 });
 
 // Sleep utility for typing animation
@@ -46,10 +54,18 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 // Z-INDEX MANAGEMENT
 // ============================================================================
 
+// Constants
+const ACTIVE_Z_INDEX = 1000;
+const SKILL_SPREAD_X = 400;
+const SKILL_SPREAD_Y = 300;
+const SOCIAL_SPREAD_X = 300;
+const SOCIAL_SPREAD_Y = 200;
+const TESTIMONIALS_PER_PAGE = 3;
+
 // Controls section layering during transitions
 function setActiveZIndex(index) {
   sections.forEach((section, i) => {
-    section.style.zIndex = i === index ? '1000' : '1';
+    section.style.zIndex = i === index ? ACTIVE_Z_INDEX : '1';
   });
 }
 
@@ -63,68 +79,54 @@ function setActiveZIndex(index) {
 const RANDOMIZE_SPREAD = 0.8;
 const ROTATION_RANGE = 20;
 
-function storeOriginalPositions() {
-  contents.forEach(content => {
-    const children = Array.from(content.children);
-    originalPositions.set(content, children.map(child => ({
-      element: child,
-      x: 0,
-      y: 0
-    })));
+
+
+function applyRandomTransform(elements, spreadX, spreadY, rotationRange) {
+  elements.forEach(element => {
+    const randomX = (Math.random() - 0.5) * spreadX;
+    const randomY = (Math.random() - 0.5) * spreadY;
+    const rotation = Math.random() * rotationRange - rotationRange / 2;
+    gsap.set(element, { x: randomX, y: randomY, rotation });
   });
 }
 
 function randomizeElements(content) {
-  const children = Array.from(content.children);
+  const children = [...content.children];
   const rect = content.getBoundingClientRect();
   
-  children.forEach(child => {
-    const randomX = (Math.random() - 0.5) * rect.width * RANDOMIZE_SPREAD;
-    const randomY = (Math.random() - 0.5) * rect.height * RANDOMIZE_SPREAD;
-    gsap.set(child, { x: randomX, y: randomY, rotation: Math.random() * ROTATION_RANGE - 10 });
-  });
+  applyRandomTransform(children, rect.width * RANDOMIZE_SPREAD, rect.height * RANDOMIZE_SPREAD, ROTATION_RANGE);
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
   
   if (skillGrid) {
-    const skills = Array.from(skillGrid.children);
-    skills.forEach(skill => {
-      const randomX = (Math.random() - 0.5) * 400;
-      const randomY = (Math.random() - 0.5) * 300;
-      gsap.set(skill, { x: randomX, y: randomY, rotation: Math.random() * 10 - 5 });
-    });
+    applyRandomTransform([...skillGrid.children], SKILL_SPREAD_X, SKILL_SPREAD_Y, 10);
   }
   
   if (socialLinks) {
-    const links = Array.from(socialLinks.children);
-    links.forEach(link => {
-      const randomX = (Math.random() - 0.5) * 300;
-      const randomY = (Math.random() - 0.5) * 200;
-      gsap.set(link, { x: randomX, y: randomY, rotation: Math.random() * 15 - 7.5 });
-    });
+    applyRandomTransform([...socialLinks.children], SOCIAL_SPREAD_X, SOCIAL_SPREAD_Y, 15);
   }
 }
 
-function resetToOriginalPositions(content) {
-  const children = Array.from(content.children);
-  children.forEach(child => {
-    gsap.set(child, { x: 0, y: 0, rotation: 0 });
+function resetElements(elements) {
+  elements.forEach(element => {
+    gsap.set(element, { x: 0, y: 0, rotation: 0 });
   });
+}
+
+function resetToOriginalPositions(content) {
+  const children = [...content.children];
+  resetElements(children);
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
   
   if (skillGrid) {
-    Array.from(skillGrid.children).forEach(skill => {
-      gsap.set(skill, { x: 0, y: 0, rotation: 0 });
-    });
+    resetElements([...skillGrid.children]);
   }
   
   if (socialLinks) {
-    Array.from(socialLinks.children).forEach(link => {
-      gsap.set(link, { x: 0, y: 0, rotation: 0 });
-    });
+    resetElements([...socialLinks.children]);
   }
 }
 
@@ -168,82 +170,83 @@ function offsetFor(direction, magnitudeX = window.innerWidth, magnitudeY = windo
 }
 
 function animateChildrenToRandom(content) {
-  const children = Array.from(content.children);
+  const children = [...content.children];
   const rect = content.getBoundingClientRect();
   const tl = gsap.timeline();
   
-  tl.to(children, {
-    x: () => (Math.random() - 0.5) * rect.width * RANDOMIZE_SPREAD,
-    y: () => (Math.random() - 0.5) * rect.height * RANDOMIZE_SPREAD,
-    rotation: () => Math.random() * ROTATION_RANGE - 10,
-    duration: TRANSITION_DURATION,
-    ease: 'power2.inOut',
-    stagger: 0.05
-  }, 0);
+  // Pre-calculate random values for better performance
+  const childrenValues = children.map(() => ({
+    x: (Math.random() - 0.5) * rect.width * RANDOMIZE_SPREAD,
+    y: (Math.random() - 0.5) * rect.height * RANDOMIZE_SPREAD,
+    rotation: Math.random() * ROTATION_RANGE - 10
+  }));
+  
+  children.forEach((child, i) => {
+    tl.to(child, {
+      ...childrenValues[i],
+      duration: TRANSITION_DURATION,
+      ease: 'power2.inOut'
+    }, i * 0.05);
+  });
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
   
   if (skillGrid) {
-    const skills = Array.from(skillGrid.children);
-    tl.to(skills, {
-      x: () => (Math.random() - 0.5) * 400,
-      y: () => (Math.random() - 0.5) * 300,
-      rotation: () => Math.random() * 10 - 5,
-      duration: TRANSITION_DURATION,
-      ease: 'power2.inOut',
-      stagger: 0.02
-    }, 0);
+    const skills = [...skillGrid.children];
+    skills.forEach((skill, i) => {
+      tl.to(skill, {
+        x: (Math.random() - 0.5) * SKILL_SPREAD_X,
+        y: (Math.random() - 0.5) * SKILL_SPREAD_Y,
+        rotation: Math.random() * 10 - 5,
+        duration: TRANSITION_DURATION,
+        ease: 'power2.inOut'
+      }, i * 0.02);
+    });
   }
   
   if (socialLinks) {
-    const links = Array.from(socialLinks.children);
-    globeAnimation.reverse();
-    tl.to(links, {
-      x: () => (Math.random() - 0.5) * 300,
-      y: () => (Math.random() - 0.5) * 200,
-      rotation: () => Math.random() * 15 - 7.5,
-      duration: TRANSITION_DURATION,
-      ease: 'power2.inOut',
-      stagger: 0.1
-    }, 0);
+    const links = [...socialLinks.children];
+    if (typeof globeAnimation !== 'undefined' && globeAnimation) {
+      globeAnimation.reverse();
+    }
+    links.forEach((link, i) => {
+      tl.to(link, {
+        x: (Math.random() - 0.5) * SOCIAL_SPREAD_X,
+        y: (Math.random() - 0.5) * SOCIAL_SPREAD_Y,
+        rotation: Math.random() * 15 - 7.5,
+        duration: TRANSITION_DURATION,
+        ease: 'power2.inOut'
+      }, i * 0.1);
+    });
   }
   
   return tl;
 }
 
 function animateChildrenToOriginal(content) {
-  const children = Array.from(content.children);
+  const children = [...content.children];
   const tl = gsap.timeline();
   
-  tl.to(children, {
+  const resetConfig = {
     x: 0, y: 0, rotation: 0,
     duration: CHILD_ANIMATION_DURATION,
-    ease: 'back.out(1.7)',
-    stagger: 0.08
-  }, 0);
+    ease: 'back.out(1.7)'
+  };
+  
+  tl.to(children, { ...resetConfig, stagger: 0.08 }, 0);
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
   
   if (skillGrid) {
-    const skills = Array.from(skillGrid.children);
-    tl.to(skills, {
-      x: 0, y: 0, rotation: 0,
-      duration: CHILD_ANIMATION_DURATION,
-      ease: 'back.out(1.7)',
-      stagger: 0.03
-    }, 0.15);
+    const skills = [...skillGrid.children];
+    tl.to(skills, { ...resetConfig, stagger: 0.03 }, 0.15);
   }
   
   if (socialLinks) {
-    const links = Array.from(socialLinks.children);
-    tl.to(links, {
-      x: 0, y: 0, rotation: 0,
-      duration: CHILD_ANIMATION_DURATION,
-      ease: 'back.out(1.7)',
-      stagger: 0.12
-    }, 0.2);
+    const links = [...socialLinks.children];
+    tl.to(links, { ...resetConfig, stagger: 0.12 }, 0.2);
   }
   
   return tl;
@@ -276,7 +279,6 @@ function goToSection(target) {
       });
     },
     onComplete: () => {
-      const prevSectionId = sections[current].id;
       current = target;
       isAnimating = false;
       updateNavButtons();
@@ -309,6 +311,23 @@ function updateNavButtons() {
   navBtns.forEach(btn => btn.classList.remove('active'));
   const activeBtn = navBtns.find(btn => btn.dataset.section === currentSectionId);
   if (activeBtn) activeBtn.classList.add('active');
+  updateIndicators();
+}
+
+function updateIndicators() {
+  if (scrollIndicator) {
+    if (current === sections.length - 1) {
+      gsap.to(scrollIndicator, { rotation: 180, duration: 0.3, ease: 'power2.out' });
+      gsap.delayedCall(0.3, () => {
+        gsap.to(scrollIndicator, { y: -1, duration: 0.3, ease: 'power2.inOut', repeat: -1, yoyo: true });
+      });
+    } else {
+      gsap.to(scrollIndicator, { rotation: 0, duration: 0.3, ease: 'power2.out' });
+      gsap.delayedCall(0.3, () => {
+        gsap.to(scrollIndicator, { y: 1, duration: 0.3, ease: 'power2.inOut', repeat: -1, yoyo: true });
+      });
+    }
+  }
 }
 
 function animateHeadingOut(callback) {
@@ -323,12 +342,16 @@ function animateHeadingOut(callback) {
   });
 }
 
-function animateHeadingIn(newText) {
-  sectionHeading.innerHTML = newText.split('').map(char => 
+function wrapTextInSpans(text) {
+  return text.split('').map(char => 
     char === ' ' ? '<span class="letter">&nbsp;</span>' : `<span class="letter">${char}</span>`
   ).join('');
+}
+
+function animateHeadingIn(newText) {
+  sectionHeading.innerHTML = wrapTextInSpans(newText);
   
-  const newLetters = Array.from(sectionHeading.children);
+  const newLetters = [...sectionHeading.children];
   gsap.set(newLetters, { x: -100, opacity: 0 });
   
   gsap.to(newLetters, {
@@ -345,14 +368,10 @@ function initHeading() {
   const myNameSpan = sectionHeading.querySelector('.myName');
   if (myNameSpan) {
     const text = myNameSpan.textContent;
-    myNameSpan.innerHTML = text.split('').map(char => 
-      char === ' ' ? '<span class="letter">&nbsp;</span>' : `<span class="letter">${char}</span>`
-    ).join('');
+    myNameSpan.innerHTML = wrapTextInSpans(text);
   } else {
     const text = sectionHeading.textContent;
-    sectionHeading.innerHTML = text.split('').map(char => 
-      char === ' ' ? '<span class="letter">&nbsp;</span>' : `<span class="letter">${char}</span>`
-    ).join('');
+    sectionHeading.innerHTML = wrapTextInSpans(text);
   }
 }
 
@@ -363,10 +382,7 @@ function initHeading() {
 // Mouse wheel navigation
 function onWheel(e) {
   e.preventDefault();
-  if (isAnimating || isScrollDisabled) {
-    console.log('Scroll blocked:', { isAnimating, isScrollDisabled });
-    return;
-  }
+  if (isAnimating || isScrollDisabled) return;
   const dir = Math.sign(e.deltaY);
   if (dir > 0) goToSection(current + 1);
   else if (dir < 0) goToSection(current - 1);
@@ -391,16 +407,18 @@ addEventListener('touchend', (e) => {
 }, { passive: false });
 
 // Navigation button clicks
-navBtns.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    if (isAnimating) return;
-    const targetId = btn.dataset.section;
-    const targetIndex = sections.findIndex(s => s.id === targetId);
-    if (targetIndex !== current) {
-      goToSection(targetIndex);
-    }
+if (navBtns && navBtns.length > 0) {
+  navBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (isAnimating) return;
+      const targetId = btn.dataset.section;
+      const targetIndex = sections.findIndex(s => s.id === targetId);
+      if (targetIndex >= 0 && targetIndex !== current) {
+        goToSection(targetIndex);
+      }
+    });
   });
-});
+}
 
 // ============================================================================
 // SECTION-SPECIFIC ANIMATIONS
@@ -473,7 +491,6 @@ const vbarValue = document.getElementById('vbar-value');
 const skillsDescription = document.getElementById('skillsDescription');
 const codeSkillsContent = document.querySelector('#codeSkills .content');
 
-let activeSkill = null;
 let currentBackground = null;
 
 
@@ -536,7 +553,7 @@ skills.forEach(s => {
       currentBackground = s.bg;
     }
     
-    activeSkill = s;
+
   });
 
   skillGrid.appendChild(b);
@@ -552,11 +569,6 @@ function initializeSkills() {
     }
   }
 }
-
-// PROJECTS SECTION
-
-
-
 
 // PROJECTS SECTION: Generate bento grid
 const projects = [
@@ -692,7 +704,6 @@ projects.forEach((project, index) => {
     
     // Disable page scrolling
     isScrollDisabled = true;
-    console.log('Modal opened, scroll disabled:', isScrollDisabled);
   });
   
   bentoGrid.appendChild(bentoItem);
@@ -705,7 +716,6 @@ function closeProjectModal() {
   
   // Re-enable page scrolling
   isScrollDisabled = false;
-  console.log('Modal closed, scroll enabled:', !isScrollDisabled);
 }
 
 closeModal.addEventListener('click', closeProjectModal);
@@ -804,17 +814,23 @@ const testimony = [
 ];
 
 function createTestimonialCard(testimony) {
+  if (!testimony || !testimony.name || !testimony.comment || !testimony.rating) {
+    return '<div class="testimonial-card">Invalid testimonial data</div>';
+  }
+  
+  const rating = Math.max(0, Math.min(5, testimony.rating));
+  
   return `
     <div class="testimonial-card">
       <div class="testimonial-header">
-        <img src="${testimony.img}" alt="${testimony.name}" class="avatar-img" loading="lazy">
+        <img src="${encodeURI(testimony.img || '')}" alt="${testimony.name}" class="avatar-img" loading="lazy">
         <div class="info">
           <h4>${testimony.name}</h4>
         </div>
       </div>
       <p>"${testimony.comment}"</p>
       <div class="rating">
-        <span>${'★'.repeat(testimony.rating)}${'☆'.repeat(5 - testimony.rating)}</span>
+        <span>${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}</span>
       </div>
     </div>
   `;
@@ -822,30 +838,30 @@ function createTestimonialCard(testimony) {
 
 function updateTestimonials() {
   const grid = document.getElementById('testimonialsGrid');
+  if (!grid) return;
+  
   const currentTestimonials = [];
   
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < TESTIMONIALS_PER_PAGE; i++) {
     const index = (currentTestimonyIndex + i) % testimony.length;
     currentTestimonials.push(testimony[index]);
   }
   
-  gsap.to(grid, {
-    opacity: 0,
-    duration: 0.3,
-    onComplete: () => {
+  const tl = gsap.timeline();
+  tl.to(grid, { opacity: 0, duration: 0.3 })
+    .call(() => {
       grid.innerHTML = currentTestimonials.map(createTestimonialCard).join('');
-      gsap.to(grid, { opacity: 1, duration: 0.3 });
-    }
-  });
+    })
+    .to(grid, { opacity: 1, duration: 0.3 });
 }
 
 function nextTestimonials() {
-  currentTestimonyIndex = (currentTestimonyIndex + 3) % testimony.length;
+  currentTestimonyIndex = (currentTestimonyIndex + TESTIMONIALS_PER_PAGE) % testimony.length;
   updateTestimonials();
 }
 
 function prevTestimonials() {
-  currentTestimonyIndex = (currentTestimonyIndex - 3 + testimony.length) % testimony.length;
+  currentTestimonyIndex = (currentTestimonyIndex - TESTIMONIALS_PER_PAGE + testimony.length) % testimony.length;
   updateTestimonials();
 }
 
@@ -864,25 +880,24 @@ function animateTestimonialsIn() {
 
 // CONTACT SECTION: Animate contact elements
 function animateContactIn() {
-  const globe = document.querySelectorAll('.slidingGlobe')[0];
-  console.log(globe);
+  const globe = document.querySelector('.slidingGlobe');
   const socialLinks = document.querySelectorAll('.social-link');
-  gsap.to(socialLinks, 
-    { 
-      y: 0, opacity: 1, filter: 'blur(0px)',
-      duration: 0.6,
-      ease: 'back.out(1.7)',
-      stagger: 0.1
-    }
-  );
-  globeAnimation = gsap.to(globe, 
-    { 
+  
+  gsap.to(socialLinks, { 
+    y: 0, opacity: 1, filter: 'blur(0px)',
+    duration: 0.6,
+    ease: 'back.out(1.7)',
+    stagger: 0.1
+  });
+  
+  if (globe) {
+    globeAnimation = gsap.to(globe, { 
       x: '42vw', opacity: 1, filter: 'blur(0px)',
       rotation: 0,
       duration: 1,
       ease: 'back.out(1.5)'
-    }
-  );
+    });
+  }
 }
 
 
@@ -913,7 +928,6 @@ function hideLoadingPage() {
 // Mobile state variables
 let isMobile = window.innerWidth <= 768;
 let currentSlide = 0;
-let projectsData = projects;
 
 // Check if device is mobile
 function checkMobile() {
@@ -944,15 +958,11 @@ function initMobileFeatures() {
 function removeMobileFeatures() {
   const burgerMenu = document.getElementById('burgerMenu');
   const navButtons = document.getElementById('navButtons');
-  const skillsDropdownContent = document.getElementById('skillsDropdownContent');
   
   if (burgerMenu) burgerMenu.style.display = 'none';
   if (navButtons) {
     navButtons.classList.remove('active');
     navButtons.style.display = 'flex';
-  }
-  if (skillsDropdownContent) {
-    skillsDropdownContent.classList.remove('active');
   }
 }
 
@@ -979,49 +989,11 @@ function initBurgerMenu() {
   });
 }
 
-// Skills dropdown functionality
+// Skills dropdown functionality (placeholder for future mobile dropdown)
 function initSkillsDropdown() {
-  const skillsDropdownToggle = document.getElementById('skillsDropdownToggle');
-  const skillsDropdownContent = document.getElementById('skillsDropdownContent');
-  
-  if (!skillsDropdownToggle || !skillsDropdownContent) return;
-  
-  skillsDropdownToggle.addEventListener('click', () => {
-    skillsDropdownContent.classList.toggle('active');
-    const arrow = skillsDropdownToggle.querySelector('span:last-child');
-    arrow.textContent = skillsDropdownContent.classList.contains('active') ? '▲' : '▼';
-    
-    // Control page scrolling
-    isScrollDisabled = skillsDropdownContent.classList.contains('active');
-  });
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.skills-dropdown')) {
-      skillsDropdownContent.classList.remove('active');
-      const arrow = skillsDropdownToggle.querySelector('span:last-child');
-      if (arrow) arrow.textContent = '▼';
-      
-      // Re-enable page scrolling
-      isScrollDisabled = false;
-    }
-  });
-  
-  // Update dropdown toggle text when skill is selected
-  const skillButtons = skillGrid.querySelectorAll('button');
-  skillButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const skillName = btn.textContent.trim();
-      const toggleText = skillsDropdownToggle.querySelector('span:first-child');
-      toggleText.textContent = skillName;
-      skillsDropdownContent.classList.remove('active');
-      const arrow = skillsDropdownToggle.querySelector('span:last-child');
-      arrow.textContent = '▼';
-      
-      // Re-enable page scrolling
-      isScrollDisabled = false;
-    });
-  });
+  // Skills dropdown elements don't exist in current HTML
+  // This function is reserved for future mobile dropdown implementation
+  return;
 }
 
 // Projects slider functionality
@@ -1044,7 +1016,7 @@ function initProjectsSlider() {
   });
   
   nextBtn.addEventListener('click', () => {
-    if (currentSlide < projectsData.length - 1) {
+    if (currentSlide < projects.length - 1) {
       currentSlide++;
       updateSlider();
     }
@@ -1055,15 +1027,15 @@ function createMobileSlider() {
   const sliderContainer = document.getElementById('projectsSliderContainer');
   const sliderDots = document.getElementById('sliderDots');
   
-  if (!sliderContainer || !projectsData.length) return;
+  if (!sliderContainer || !sliderDots || !projects.length) return;
   
   sliderContainer.innerHTML = '';
   sliderDots.innerHTML = '';
   
-  projectsData.forEach((project, index) => {
+  projects.forEach((project, index) => {
     const slide = document.createElement('div');
     slide.className = 'project-slide';
-    slide.style.backgroundImage = `url('${project.img}')`;
+    slide.style.backgroundImage = `url('${encodeURI(project.img)}')`;
     slide.innerHTML = `<div class="title">${project.Name}</div>`;
     slide.addEventListener('click', () => openProjectModal(project));
     sliderContainer.appendChild(slide);
@@ -1084,7 +1056,6 @@ function updateSlider() {
   
   if (!sliderContainer) return;
   const slideWidth = 0.84 * window.innerWidth;
-  console.log(slideWidth);
   sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
   
   dots.forEach((dot, index) => {
@@ -1108,17 +1079,16 @@ function openProjectModal(project) {
   
   // Disable page scrolling
   isScrollDisabled = true;
-  console.log('Modal opened (mobile), scroll disabled:', isScrollDisabled);
 }
 
 // Initialize positions after DOM load
 document.addEventListener('DOMContentLoaded', () => {
   hideLoadingPage();
   
-  storeOriginalPositions();
   initPositions();
   initHeading();
   updateNavButtons();
+  updateIndicators();
   initializeSkills();
   
   // Initialize mobile features
@@ -1138,7 +1108,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Initialize animations for the first section
-  if (sections[0].id === 'projects') startProjectsAnimation();
   if (sections[0].id === 'testimony') animateTestimonialsIn();
   if (sections[0].id === 'contact') animateContactIn();
 });
