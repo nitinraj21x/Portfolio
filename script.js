@@ -79,8 +79,6 @@ function setActiveZIndex(index) {
 const RANDOMIZE_SPREAD = 0.8;
 const ROTATION_RANGE = 20;
 
-
-
 function applyRandomTransform(elements, spreadX, spreadY, rotationRange) {
   elements.forEach(element => {
     const randomX = (Math.random() - 0.5) * spreadX;
@@ -98,6 +96,7 @@ function randomizeElements(content) {
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
+  const bentoGrid = content.querySelector('.bento-grid');
   
   if (skillGrid) {
     applyRandomTransform([...skillGrid.children], SKILL_SPREAD_X, SKILL_SPREAD_Y, 10);
@@ -105,6 +104,10 @@ function randomizeElements(content) {
   
   if (socialLinks) {
     applyRandomTransform([...socialLinks.children], SOCIAL_SPREAD_X, SOCIAL_SPREAD_Y, 15);
+  }
+  
+  if (bentoGrid) {
+    applyRandomTransform([...bentoGrid.children], SKILL_SPREAD_X, SKILL_SPREAD_Y, 10);
   }
 }
 
@@ -120,6 +123,7 @@ function resetToOriginalPositions(content) {
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
+  const bentoGrid = content.querySelector('.bento-grid');
   
   if (skillGrid) {
     resetElements([...skillGrid.children]);
@@ -127,6 +131,10 @@ function resetToOriginalPositions(content) {
   
   if (socialLinks) {
     resetElements([...socialLinks.children]);
+  }
+  
+  if (bentoGrid) {
+    resetElements([...bentoGrid.children]);
   }
 }
 
@@ -191,6 +199,7 @@ function animateChildrenToRandom(content) {
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
+  const bentoGrid = content.querySelector('.bento-grid');
   
   if (skillGrid) {
     const skills = [...skillGrid.children];
@@ -221,6 +230,19 @@ function animateChildrenToRandom(content) {
     });
   }
   
+  if (bentoGrid) {
+    const projects = [...bentoGrid.children];
+    projects.forEach((project, i) => {
+      tl.to(project, {
+        x: (Math.random() - 0.5) * SKILL_SPREAD_X,
+        y: (Math.random() - 0.5) * SKILL_SPREAD_Y,
+        rotation: Math.random() * 10 - 5,
+        duration: TRANSITION_DURATION,
+        ease: 'power2.inOut'
+      }, i * 0.02);
+    });
+  }
+  
   return tl;
 }
 
@@ -238,6 +260,7 @@ function animateChildrenToOriginal(content) {
   
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
+  const bentoGrid = content.querySelector('.bento-grid');
   
   if (skillGrid) {
     const skills = [...skillGrid.children];
@@ -247,6 +270,11 @@ function animateChildrenToOriginal(content) {
   if (socialLinks) {
     const links = [...socialLinks.children];
     tl.to(links, { ...resetConfig, stagger: 0.12 }, 0.2);
+  }
+  
+  if (bentoGrid) {
+    const projects = [...bentoGrid.children];
+    tl.to(projects, { ...resetConfig, stagger: 0.03 }, 0.15);
   }
   
   return tl;
@@ -363,17 +391,7 @@ function animateHeadingIn(newText) {
   });
 }
 
-// Initialize heading with letters
-function initHeading() {
-  const myNameSpan = sectionHeading.querySelector('.myName');
-  if (myNameSpan) {
-    const text = myNameSpan.textContent;
-    myNameSpan.innerHTML = wrapTextInSpans(text);
-  } else {
-    const text = sectionHeading.textContent;
-    sectionHeading.innerHTML = wrapTextInSpans(text);
-  }
-}
+
 
 // ============================================================================
 // INPUT HANDLERS
@@ -424,11 +442,10 @@ if (navBtns && navBtns.length > 0) {
 // SECTION-SPECIFIC ANIMATIONS
 // ============================================================================
 
-// HEADING SECTION: Name stroke and typing animation
-gsap.to('.name-stroke', { strokeDashoffset: 0, duration: 7.5, ease: 'power3.out', delay: 0.3 });
+
 
 // Typing animation control variables
-const roles = ["Problem Solver", "Bored", "Tech Enthusiast", "Web Designer", "Human", "UI Designer", "Graduate", "Team Player"];
+const roles = ["Problem Solver", "Tech Enthusiast", "Web Designer", "UI Designer", "Graduate", "Team Player"];
 const roleSpan = document.getElementById('dynamic-role');
 const TYPING_SPEED = 60;
 const DELETE_SPEED = 30;
@@ -493,8 +510,6 @@ const codeSkillsContent = document.querySelector('#codeSkills .content');
 
 let currentBackground = null;
 
-
-
 // Build interactive skill buttons
 skills.forEach(s => {
   const b = document.createElement('button');
@@ -552,8 +567,6 @@ skills.forEach(s => {
       codeSkillsContent.style.backgroundImage = `url('${s.bg}')`;
       currentBackground = s.bg;
     }
-    
-
   });
 
   skillGrid.appendChild(b);
@@ -576,91 +589,106 @@ const projects = [
     "Name": "Automated Speed Governor Using RFiD",
     "img": "bg/img1.jpg",
     "Languages": ["C++", "Arduino", "Embedded C"],
-    "pDec": "Developed a prototype for an automated speed governor system using RFID technology during college. The system controls vehicle speed by reading data from RFID tags placed on the road, automatically adjusting the vehicle's speed(among others) to comply with posted limits."
+    "pDec": "Developed a prototype for an automated speed governor system using RFID technology during college. The system controls vehicle speed by reading data from RFID tags placed on the road, automatically adjusting the vehicle's speed(among others) to comply with posted limits.",
+    "url":"#"
   },
   {
     "Name": "Reusable 3D Backgrounds",
     "img": "bg/img2.jpg",
     "Languages": ["JavaScript", "WebGL", "Three.js", "gsap"],
-    "pDec": "Created few interactive 3D backgrounds...few that cant be interacted with... and a few just good old 2D animations."
+    "pDec": "Created few interactive 3D backgrounds...few that cant be interacted with... and a few just good old 2D animations.",
+    "url":"#"
   },
   {
     "Name": "My Tourism Website",
     "img": "bg/img3.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "PHP", "SQL", "jQuery"],
-    "pDec": "Designed and developed a comprehensive tourism website. The site features dynamic content management with PHP, a SQL database for storing hotel information and queries, and an interactive front-end using JavaScript and jQuery to enhance user experience."
+    "pDec": "Designed and developed a comprehensive tourism website. The site features dynamic content management with PHP, a SQL database for storing hotel information and queries, and an interactive front-end using JavaScript and jQuery to enhance user experience.",
+    "url":"#"
   },
   {
     "Name": "Fan-made Dota 2 Website",
     "img": "bg/img4.jpg",
     "Languages": ["HTML", "CSS", "JavaScript"],
-    "pDec": "Just another fan-made website for the popular game, Dota 2. Design achieved using pure HTML, CSS, and JavaScript."
+    "pDec": "Just another fan-made website for the popular game, Dota 2. Design achieved using pure HTML, CSS, and JavaScript.",
+    "url":"#"
   },
   {
     "Name": "Gaming Lounge Website - Wild Gaming Cafe",
     "img": "bg/img5.jpg",
     "Languages": ["React, JavaScript, ParticleJs"],
-    "pDec": "A custom made website for a Gaming Cafe. Made with lots of unnecessary but fun animations and a team"
+    "pDec": "A custom made website for a Gaming Cafe. Made with lots of unnecessary but fun animations and a team",
+    "url":"https://www.wildgamingcafe.com/"
   },
   {
     "Name": "Content Scrapper Extension",
     "img": "bg/img6.jpg",
     "Languages": ["JavaScript"],
-    "pDec": "Built a browser extension that scrapes specific content from a specific website. The tool automates the extraction of data upon detecting the required page, and stores data as json."
+    "pDec": "Built a browser extension that scrapes specific content from a specific website. The tool automates the extraction of data upon detecting the required page, and stores data as json.",
+    "url":"#"
   },
   {
     "Name": "Graphic Designs",
     "img": "bg/img7.jpg",
     "Languages": ["Adobe Photoshop", "Adobe Illustrator"],
-    "pDec": "A collection of graphic design work including logos, posters, and digital illustrations created for personal projects using Adobe Photoshop and Illustrator."
+    "pDec": "A collection of graphic design work including logos, posters, and digital illustrations created for personal projects using Adobe Photoshop and Illustrator.",
+    "url":"#"
   },
   {
     "Name": "Photo Edits",
     "img": "bg/img8.jpg",
     "Languages": ["Adobe Photoshop", "MatLab"],
-    "pDec": "A portfolio of photo editing and manipulation projects. These edits focus on color correction, retouching, edge detection etc."
+    "pDec": "A portfolio of photo editing and manipulation projects. These edits focus on color correction, retouching, edge detection etc.",
+    "url":"#"
   },
   {
     "Name": "Snake Game",
     "img": "bg/img9.jpg",
     "Languages": ["Javascript"],
-    "pDec": "A classic Snake game created as a web-based application. "
+    "pDec": "A classic Snake game created as a web-based application. ",
+    "url":"#"
   },
   {
     "Name": "Generic Website",
     "img": "bg/img10.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "React", "React-bits", "Framer-Motion"],
-    "pDec": "A modern, generic website template built using React for a component-based architecture. Framer Motion for smooth animations and transitions and React-bits for few animations."
+    "pDec": "A modern, generic website template built using React for a component-based architecture. Framer Motion for smooth animations and transitions and React-bits for few animations.",
+    "url":"#"
   },
   {
     "Name": "Function Modules",
     "img": "bg/img11.jpg",
     "Languages": ["JavaScript", "React"],
-    "pDec": "A collection of reusable function modules and React components. Most components and modules are related to animations and transitions."
+    "pDec": "A collection of reusable function modules and React components. Most components and modules are related to animations and transitions.",
+    "url":"#"
   },
   {
     "Name": "My E-commerce Website",
     "img": "bg/img12.jpg",
     "Languages": ["Node.js", "Express", "MongoDB", "React"],
-    "pDec": "Attempt at building a E-commerce Website. Ongoing"
+    "pDec": "Attempt at building a E-commerce Website. Ongoing",
+    "url":"#"
   },
   {
     "Name": "Generic Dashboard",
     "img": "bg/img13.jpg",
     "Languages": ["HTML", "SASS", "JavaScript", "Chart.js"],
-    "pDec": "A normal dashboard with charts and bulletin"
+    "pDec": "A normal dashboard with charts and bulletin",
+    "url":"#"
   },
   {
     "Name": "My Portfolio Website",
     "img": "bg/img14.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "GSAP"],
-    "pDec": "A personal portfolio website showcasing projects and skills. Built with GSAP animations for smooth, engaging user interactions."
+    "pDec": "A personal portfolio website showcasing projects and skills. Built with GSAP animations for smooth, engaging user interactions.",
+    "url":"#"
   },
   {
     "Name": "My Blog",
     "img": "bg/img15.jpg",
     "Languages": ["HTML", "CSS", "JavaScript"],
-    "pDec": "A simple blog platform with a modern, minimalist design. The front-end is built with pure HTML, CSS, and JavaScript, focusing on readability and a smooth user experience."
+    "pDec": "A simple blog platform with a modern, minimalist design. The front-end is built with pure HTML, CSS, and JavaScript, focusing on readability and a smooth user experience.",
+    "url":"#"
   }
 ]
 
@@ -669,6 +697,7 @@ const modal = document.getElementById('projectModal');
 const modalTitle = document.getElementById('modalTitle');
 const modalDescription = document.getElementById('modalDescription');
 const modalLanguages = document.getElementById('modalLanguages');
+const visitBtn = document.getElementById('visitBtn');
 const closeModal = document.querySelector('.close');
 
 // Large item positions (2x2 grid spans)
@@ -698,6 +727,11 @@ projects.forEach((project, index) => {
       langSpan.textContent = lang;
       modalLanguages.appendChild(langSpan);
     });
+    
+    // Update visit button href
+    if (visitBtn) {
+      visitBtn.href = project.url;
+    }
     
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -733,8 +767,6 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-
-
 // TESTIMONIALS SECTION: Manual slider with user controls
 let currentTestimonyIndex = 0;
 
@@ -752,34 +784,10 @@ const testimony = [
     "img": "profiles/prime.jpg"
   },
   {
-    "name": "Cleo Pathra",
-    "comment": "Whoa! He made a 3D image of me...Or copied the code...Anyways",
-    "rating": 5,
-    "img": "profiles/cleo.jpg"
-  },
-  {
-    "name": "John Wick",
-    "comment": "Check it out, high table. My new profile pic is something to die for. Thanks.",
-    "rating": 4,
-    "img": "profiles/wick.jpg"
-  },
-  {
-    "name": "Dimitri Kalashnikova ",
-    "comment": "Code like Vodka, smooth.",
-    "rating": 4,
-    "img": "profiles/rus.jpg"
-  },
-  {
     "name": "Ghengis Kumar",
     "comment": "My messengers worked tirelessly to send a Good Morning. Now I can send armies to those who dont reply back in a instant.",
     "rating": 5,
     "img": "profiles/khan.jpg"
-  },
-  {
-    "name": "Princess Peach",
-    "comment": "Tracking system works. So now I can run away to a new castle much effectively.",
-    "rating": 4,
-    "img": "profiles/peach.jpg"
   },
   {
     "name": "Hermione Granger",
@@ -792,18 +800,6 @@ const testimony = [
     "comment": "Implemented Dracarys function module. Before upgrades could be made, I was stabbed by my lover who became my brother.",
     "rating": 5,
     "img": "profiles/danny.jpg"
-  },
-  {
-    "name": "Ellen Ripley",
-    "comment": "While fighting the Alien, the Thoughts and Prayers sure did its job.",
-    "rating": 4,
-    "img": "profiles/ellen.jpg"
-  },
-  {
-    "name": "Batman",
-    "comment": "I AM BATMAN",
-    "rating": 5,
-    "img": "profiles/batman.jpg"
   },
   {
     "name": "John Snow",
@@ -900,8 +896,6 @@ function animateContactIn() {
   }
 }
 
-
-
 // ============================================================================
 // INITIALIZATION & EVENT LISTENERS
 // ============================================================================
@@ -950,7 +944,6 @@ function initMobileFeatures() {
   if (burgerMenu) burgerMenu.style.display = 'flex';
   
   initBurgerMenu();
-  initSkillsDropdown();
   initProjectsSlider();
 }
 
@@ -989,12 +982,7 @@ function initBurgerMenu() {
   });
 }
 
-// Skills dropdown functionality (placeholder for future mobile dropdown)
-function initSkillsDropdown() {
-  // Skills dropdown elements don't exist in current HTML
-  // This function is reserved for future mobile dropdown implementation
-  return;
-}
+
 
 // Projects slider functionality
 function initProjectsSlider() {
@@ -1074,6 +1062,11 @@ function openProjectModal(project) {
     modalLanguages.appendChild(langSpan);
   });
   
+  // Update visit button href
+  if (visitBtn) {
+    visitBtn.href = project.url;
+  }
+  
   modal.style.display = 'block';
   document.body.style.overflow = 'hidden';
   
@@ -1081,15 +1074,52 @@ function openProjectModal(project) {
   isScrollDisabled = true;
 }
 
+// Particles system
+function createParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['#9333ea', '#ffffff'];
+  
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + 'vw';
+    particle.style.top = Math.random() * 100 + 'vh';
+    container.appendChild(particle);
+    
+    function twinkle() {
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      gsap.to(particle, {
+        backgroundColor: color,
+        opacity: 1,
+        scale: Math.random() * 2 + 1,
+        duration: 0.2,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.to(particle, {
+            opacity: 0,
+            scale: 0,
+            duration: 0.3,
+            ease: 'power2.in'
+          });
+        }
+      });
+      
+      setTimeout(twinkle, Math.random() * 5000 + 2000);
+    }
+    
+    setTimeout(twinkle, Math.random() * 3000);
+  }
+}
+
 // Initialize positions after DOM load
 document.addEventListener('DOMContentLoaded', () => {
   hideLoadingPage();
   
   initPositions();
-  initHeading();
   updateNavButtons();
   updateIndicators();
   initializeSkills();
+  createParticles();
   
   // Initialize mobile features
   checkMobile();

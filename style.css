@@ -57,8 +57,6 @@ html, body {
   }
 }
 
-
-
 /* Navigation System */
 .nav-system {
   position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
@@ -80,13 +78,6 @@ html, body {
   will-change: transform, opacity;
 }
 
-.section-heading.transforming .letter {
-  font-size: 16px;
-  font-weight: 500;
-  color: #c4b5fd;
-  text-shadow: none;
-}
-
 .nav-buttons {
   position: absolute; top: 30px; right: 30px;
   display: flex; flex-direction: column; gap: 12px;
@@ -106,22 +97,8 @@ html, body {
   color: #fff; transform: translateX(-5px);
 }
 
-.nav-btn .letter {
-  display: inline-block;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-btn.active .letter {
-  color: transparent;
-  -webkit-text-stroke: 1px #fff;
-  text-stroke: 1px #fff;
-}
-
-.nav-btn.transforming .letter {
-  font-size: clamp(24px, 4vw, 48px);
-  font-weight: 700;
+.nav-btn.active {
   color: #fff;
-  text-shadow: 0 4px 20px rgba(147,51,234,0.3);
 }
 
 /* Panels */
@@ -164,19 +141,6 @@ html, body {
   }
 }
 
-@keyframes bounceUp {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateX(-50%) rotate(180deg) translateY(0);
-  }
-  40% {
-    transform: translateX(-50%) rotate(180deg) translateY(-8px);
-  }
-  60% {
-    transform: translateX(-50%) rotate(180deg) translateY(-4px);
-  }
-}
-
-
 #codeSkills .content {
   background-size: 50%;
   background-position: right bottom;
@@ -199,17 +163,18 @@ html, body {
 }
 
 /* Heading */
-.greeting { font-size: clamp(24px, 3.5vw, 40px); font-weight: 500; opacity: 0.9; }
+.greeting { font-size: clamp(24px, 3.5vw, 40px); font-weight: 500; text-shadow: 0 0 5px purple; }
 .wave { display: inline-block; transform-origin: 70% 70%; animation: wave 1.6s ease-in-out infinite; }
 @keyframes wave { 0%,60%,100% { rotate: 0deg; } 30% { rotate: 22deg; } }
 
-.name-svg { width: min(800px, 80vw); height: 160px; position: relative; top: 50px;}
-.name-stroke {
-  font-family: 'Crimson Text', serif;
-  font-size: 108px; fill: transparent; stroke: #ffffff; stroke-width: 2px;
-  stroke-dasharray: 1200; stroke-dashoffset: 1200; paint-order: stroke; letter-spacing: 2px;
-  filter: drop-shadow(0 4px 4px rgba(147,51,234,1));
+.name-text { position: relative; 
+  font-family: "Fredericka the Great", serif;
+  font-size: 70px;
+  color: #ffffff;
+  text-shadow: 0 0 5px #7c3aed; 
+  letter-spacing: 15px;
 }
+
 .role-line { font-size: clamp(18px, 2.2vw, 28px); font-weight: 300; text-shadow: 0 0 4px rgba(147,51,234,1); position: relative; top: 65px;}
 #dynamic-role { font-family: "Iceberg", sans-serif; font-weight: 700; color: #9333ea; border-right: 2px solid rgba(147,51,234,0.8); padding-right: 4px; -webkit-text-stroke: 0.75px #fff;}
 
@@ -254,8 +219,8 @@ html, body {
 
 /* Skills description box */
 .skills-description {
-  border: 1px solid rgba(147,51,234,0.3);
-  border-radius: 12px;
+  border-left: 1px solid #7c3aed;
+  border-right: 1px solid #7c3aed;
   padding: 24px;
   color: #f1f5f9;
   font-size: 20px;
@@ -296,14 +261,7 @@ html, body {
 }
 .vbar-label { font-size: 13px; color: #f1f5f9; opacity: 0.9; font-family: 'JetBrains Mono', monospace; }
 
-/* Bento Grid Projects */
-.bento-container {
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80%;
-}
+
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -440,7 +398,10 @@ html, body {
   border-radius: 25px;
   width: 35%;
   text-align: center;
-  font-size: 12px;  
+  font-size: 12px;
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .visitBtn span{
@@ -524,19 +485,6 @@ html, body {
   gap: 16px;
   margin-bottom: 16px;
 }
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #9333ea, #7c3aed);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: white;
-  font-size: 18px;
-}
-
 .avatar-img {
   width: 48px;
   height: 48px;
@@ -549,11 +497,7 @@ html, body {
   color: #fff;
   font-weight: 600;
 }
-.info span {
-  font-size: 14px;
-  color: #c4b5fd;
-  opacity: 0.8;
-}
+
 .testimonial-card p {
   font-size: 15px;
   line-height: 1.6;
@@ -592,11 +536,12 @@ html, body {
 }
 #contact .content > p {
   color: #c4b5fd;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1.6;
   margin: 0 0 32px 0;
   position: absolute;
   top: 10%;
+  text-shadow: 0 0 5px white;
 }
 .contact-methods {
   display: flex;
@@ -690,6 +635,25 @@ body::before {
   background-size: 3px 3px; opacity: 0.25;
 }
 
+/* Particles */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  opacity: 0;
+}
+
 /* Focus */
 .nav-btn:focus-visible, .skill-grid button:focus-visible, .section-heading:focus-visible, .social-link:focus-visible, .bento-item:focus-visible { outline: 2px solid #9333ea; outline-offset: 2px; }
 
@@ -704,8 +668,6 @@ body::before {
     display: none !important;
   }
 }
-
-
 
 /* Tablet Responsive Styles */
 @media (min-width: 769px) and (max-width: 1365px) {
@@ -1157,14 +1119,7 @@ body::before {
     color: #c4b5fd;
   }
 
-  .name-svg {
-    width: 90vw;
-    height: 120px;
-  }
-
-  .name-stroke {
-    font-size: 80px;
-  }
+  
 
   .role-line {
     font-size: 16px;
@@ -1223,5 +1178,3 @@ body::before {
     padding: 20px;
   }
 }
-
-
