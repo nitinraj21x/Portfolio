@@ -589,7 +589,7 @@ const projects = [
     "Name": "Automated Speed Governor Using RFiD",
     "img": "bg/img1.jpg",
     "Languages": ["C++", "Arduino", "Embedded C"],
-    "pDec": "Developed a prototype for an automated speed governor system using RFID technology during college. The system controls vehicle speed by reading data from RFID tags placed on the road, automatically adjusting the vehicle's speed(among others) to comply with posted limits.",
+    "pDec": "Developed a prototype for an automated speed governor system using RFID technology. The system controls vehicle speed by reading data from RFID tags placed on the road, automatically adjusting the vehicle's speed(among others) to comply with posted limits.",
     "url":"#"
   },
   {
@@ -597,7 +597,7 @@ const projects = [
     "img": "bg/img2.jpg",
     "Languages": ["JavaScript", "WebGL", "Three.js", "gsap"],
     "pDec": "Created few interactive 3D backgrounds...few that cant be interacted with... and a few just good old 2D animations.",
-    "url":"#"
+    "url":"https://globeonview.netlify.app/"
   },
   {
     "Name": "My Tourism Website",
@@ -653,28 +653,28 @@ const projects = [
     "img": "bg/img10.jpg",
     "Languages": ["HTML", "CSS", "JavaScript", "React", "React-bits", "Framer-Motion"],
     "pDec": "A modern, generic website template built using React for a component-based architecture. Framer Motion for smooth animations and transitions and React-bits for few animations.",
-    "url":"#"
+    "url":"https://www.sewing-circle.org"
   },
   {
     "Name": "Function Modules",
     "img": "bg/img11.jpg",
     "Languages": ["JavaScript", "React"],
     "pDec": "A collection of reusable function modules and React components. Most components and modules are related to animations and transitions.",
-    "url":"#"
+    "url":"https://www.github.com/nitinraj21x"
   },
   {
     "Name": "My E-commerce Website",
     "img": "bg/img12.jpg",
     "Languages": ["Node.js", "Express", "MongoDB", "React"],
     "pDec": "Attempt at building a E-commerce Website. Ongoing",
-    "url":"#"
+    "url":"https://shopstoponline.netlify.app"
   },
   {
     "Name": "Generic Dashboard",
     "img": "bg/img13.jpg",
     "Languages": ["HTML", "SASS", "JavaScript", "Chart.js"],
     "pDec": "A normal dashboard with charts and bulletin",
-    "url":"#"
+    "url":"https://sewingcirclefrontend.onrender.com"
   },
   {
     "Name": "My Portfolio Website",

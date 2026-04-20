@@ -478,6 +478,8 @@ html, body {
   box-shadow: 0 0 8px 4px rgba(147,51,234,0.1);
   transform: translateY(30px);
   font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 .testimonial-header {
   display: flex;
@@ -503,10 +505,12 @@ html, body {
   line-height: 1.6;
   margin: 0 0 16px 0;
   font-style: italic;
+  flex: 1;
 }
 .rating {
   color: #fbbf24;
   font-size: 14px;
+  margin-top: auto;
 }
 
 /* Contact */
