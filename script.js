@@ -728,9 +728,11 @@ projects.forEach((project, index) => {
       modalLanguages.appendChild(langSpan);
     });
     
-    // Update visit button href
+    // Update visit button href - hide if no valid URL
     if (visitBtn) {
-      visitBtn.href = project.url;
+      const hasValidUrl = project.url && project.url !== '#';
+      visitBtn.href = hasValidUrl ? project.url : '#';
+      visitBtn.style.display = hasValidUrl ? '' : 'none';
     }
     
     modal.style.display = 'block';
@@ -1062,9 +1064,11 @@ function openProjectModal(project) {
     modalLanguages.appendChild(langSpan);
   });
   
-  // Update visit button href
+  // Update visit button href - hide if no valid URL
   if (visitBtn) {
-    visitBtn.href = project.url;
+    const hasValidUrl = project.url && project.url !== '#';
+    visitBtn.href = hasValidUrl ? project.url : '#';
+    visitBtn.style.display = hasValidUrl ? '' : 'none';
   }
   
   modal.style.display = 'block';
