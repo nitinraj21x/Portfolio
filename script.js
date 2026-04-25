@@ -62,6 +62,10 @@ const SOCIAL_SPREAD_X = 300;
 const SOCIAL_SPREAD_Y = 200;
 const TESTIMONIALS_PER_PAGE = 3;
 
+function getTestimonialsPerPage() {
+  return window.innerWidth <= 768 ? 1 : TESTIMONIALS_PER_PAGE;
+}
+
 // Controls section layering during transitions
 function setActiveZIndex(index) {
   sections.forEach((section, i) => {
@@ -145,7 +149,7 @@ function initPositions() {
       gsap.set(el, { x: 0, y: 0, opacity: 1, filter: 'blur(0px)' });
       resetToOriginalPositions(el);
     } else {
-      gsap.set(el, { y: window.innerHeight, x: 0, opacity: 0, filter: 'blur(8px)' });
+      gsap.set(el, { x: 0, y: 0, opacity: 0, filter: 'blur(8px)' });
       randomizeElements(el);
     }
   });
@@ -177,106 +181,167 @@ function offsetFor(direction, magnitudeX = window.innerWidth, magnitudeY = windo
   }
 }
 
-function animateChildrenToRandom(content) {
-  const children = [...content.children];
-  const rect = content.getBoundingClientRect();
+function animateChildrenToRandom(content, outDir) {
   const tl = gsap.timeline();
-  
-  // Pre-calculate random values for better performance
-  const childrenValues = children.map(() => ({
-    x: (Math.random() - 0.5) * rect.width * RANDOMIZE_SPREAD,
-    y: (Math.random() - 0.5) * rect.height * RANDOMIZE_SPREAD,
-    rotation: Math.random() * ROTATION_RANGE - 10
-  }));
-  
-  children.forEach((child, i) => {
-    tl.to(child, {
-      ...childrenValues[i],
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Containers whose children are animated individually — skip animating the wrapper itself
+  const SKIP_SELECTORS = ['.skill-grid', '.bento-grid', '.social-grid', '.contact-methods', '.testimonials-grid', '.projects-slider', '.skills-layout', '.contact-container', '.testimonials-container'];
+
+  function isWrapper(el) {
+    return SKIP_SELECTORS.some(sel => el.matches(sel));
+  }
+
+  function scatterOut(spreadMult = 1) {
+    return {
+      x: (Math.random() - 0.5) * vw * spreadMult,
+      y: (Math.random() - 0.5) * vh * spreadMult,
+      rotation: Math.random() * ROTATION_RANGE * 2 - ROTATION_RANGE,
+      opacity: 0,
       duration: TRANSITION_DURATION,
-      ease: 'power2.inOut'
-    }, i * 0.05);
+      ease: 'power2.in'
+    };
+  }
+
+  // Top-level children — skip wrappers
+  const topChildren = [...content.children].filter(el => !isWrapper(el));
+  topChildren.forEach((child, i) => {
+    tl.to(child, scatterOut(0.8), i * 0.04);
   });
-  
+
   const skillGrid = content.querySelector('.skill-grid');
-  const socialLinks = content.querySelector('.social-grid');
   const bentoGrid = content.querySelector('.bento-grid');
-  
+  const socialLinks = content.querySelector('.social-grid');
+  const contactMethods = content.querySelector('.contact-methods');
+  const testimonialsGrid = content.querySelector('.testimonials-grid');
+  const sliderContainer = content.querySelector('.projects-slider-container');
+
   if (skillGrid) {
-    const skills = [...skillGrid.children];
-    skills.forEach((skill, i) => {
-      tl.to(skill, {
-        x: (Math.random() - 0.5) * SKILL_SPREAD_X,
-        y: (Math.random() - 0.5) * SKILL_SPREAD_Y,
-        rotation: Math.random() * 10 - 5,
-        duration: TRANSITION_DURATION,
-        ease: 'power2.inOut'
-      }, i * 0.02);
+    [...skillGrid.children].forEach((skill, i) => {
+      tl.to(skill, scatterOut(1.0), i * 0.02);
     });
   }
-  
+
+  if (bentoGrid) {
+    [...bentoGrid.children].forEach((project, i) => {
+      tl.to(project, scatterOut(1.0), i * 0.02);
+    });
+  }
+
+  if (sliderContainer) {
+    [...sliderContainer.children].forEach((slide, i) => {
+      tl.to(slide, scatterOut(0.9), i * 0.05);
+    });
+  }
+
   if (socialLinks) {
-    const links = [...socialLinks.children];
     if (typeof globeAnimation !== 'undefined' && globeAnimation) {
       globeAnimation.reverse();
     }
-    links.forEach((link, i) => {
-      tl.to(link, {
-        x: (Math.random() - 0.5) * SOCIAL_SPREAD_X,
-        y: (Math.random() - 0.5) * SOCIAL_SPREAD_Y,
-        rotation: Math.random() * 15 - 7.5,
-        duration: TRANSITION_DURATION,
-        ease: 'power2.inOut'
-      }, i * 0.1);
+    [...socialLinks.children].forEach((link, i) => {
+      tl.to(link, scatterOut(0.8), i * 0.08);
     });
   }
-  
-  if (bentoGrid) {
-    const projects = [...bentoGrid.children];
-    projects.forEach((project, i) => {
-      tl.to(project, {
-        x: (Math.random() - 0.5) * SKILL_SPREAD_X,
-        y: (Math.random() - 0.5) * SKILL_SPREAD_Y,
-        rotation: Math.random() * 10 - 5,
-        duration: TRANSITION_DURATION,
-        ease: 'power2.inOut'
-      }, i * 0.02);
+
+  if (contactMethods) {
+    [...contactMethods.children].forEach((item, i) => {
+      tl.to(item, scatterOut(0.8), i * 0.06);
     });
   }
-  
+
+  if (testimonialsGrid) {
+    [...testimonialsGrid.children].forEach((card, i) => {
+      tl.to(card, scatterOut(0.8), i * 0.08);
+    });
+  }
+
   return tl;
 }
 
 function animateChildrenToOriginal(content) {
-  const children = [...content.children];
   const tl = gsap.timeline();
-  
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  const SKIP_SELECTORS = ['.skill-grid', '.bento-grid', '.social-grid', '.contact-methods', '.testimonials-grid', '.projects-slider', '.skills-layout', '.contact-container', '.testimonials-container'];
+
+  function isWrapper(el) {
+    return SKIP_SELECTORS.some(sel => el.matches(sel));
+  }
+
+  function scatterSet(el) {
+    gsap.set(el, {
+      x: (Math.random() - 0.5) * vw * 0.8,
+      y: (Math.random() - 0.5) * vh * 0.8,
+      rotation: Math.random() * ROTATION_RANGE * 2 - ROTATION_RANGE,
+      opacity: 0
+    });
+  }
+
   const resetConfig = {
-    x: 0, y: 0, rotation: 0,
+    x: 0, y: 0, rotation: 0, opacity: 1,
     duration: CHILD_ANIMATION_DURATION,
     ease: 'back.out(1.7)'
   };
-  
-  tl.to(children, { ...resetConfig, stagger: 0.08 }, 0);
-  
+
+  // Top-level children — skip wrappers, reset them instantly
+  const topChildren = [...content.children];
+  topChildren.forEach(child => {
+    if (isWrapper(child)) {
+      gsap.set(child, { x: 0, y: 0, rotation: 0, opacity: 1 });
+    } else {
+      scatterSet(child);
+    }
+  });
+  const animatedTop = topChildren.filter(el => !isWrapper(el));
+  if (animatedTop.length) {
+    tl.to(animatedTop, { ...resetConfig, stagger: 0.08 }, 0);
+  }
+
   const skillGrid = content.querySelector('.skill-grid');
   const socialLinks = content.querySelector('.social-grid');
   const bentoGrid = content.querySelector('.bento-grid');
-  
+  const contactMethods = content.querySelector('.contact-methods');
+  const testimonialsGrid = content.querySelector('.testimonials-grid');
+  const sliderContainer = content.querySelector('.projects-slider-container');
+
   if (skillGrid) {
     const skills = [...skillGrid.children];
+    skills.forEach(s => scatterSet(s));
     tl.to(skills, { ...resetConfig, stagger: 0.03 }, 0.15);
   }
-  
-  if (socialLinks) {
-    const links = [...socialLinks.children];
-    tl.to(links, { ...resetConfig, stagger: 0.12 }, 0.2);
-  }
-  
+
   if (bentoGrid) {
     const projects = [...bentoGrid.children];
+    projects.forEach(p => scatterSet(p));
     tl.to(projects, { ...resetConfig, stagger: 0.03 }, 0.15);
   }
-  
+
+  if (sliderContainer) {
+    const slides = [...sliderContainer.children];
+    slides.forEach(s => scatterSet(s));
+    tl.to(slides, { ...resetConfig, stagger: 0.05 }, 0.15);
+  }
+
+  if (socialLinks) {
+    const links = [...socialLinks.children];
+    links.forEach(l => scatterSet(l));
+    tl.to(links, { ...resetConfig, stagger: 0.1 }, 0.2);
+  }
+
+  if (contactMethods) {
+    const items = [...contactMethods.children];
+    items.forEach(item => scatterSet(item));
+    tl.to(items, { ...resetConfig, stagger: 0.08 }, 0.1);
+  }
+
+  if (testimonialsGrid) {
+    const cards = [...testimonialsGrid.children];
+    cards.forEach(c => scatterSet(c));
+    tl.to(cards, { ...resetConfig, stagger: 0.1 }, 0.1);
+  }
+
   return tl;
 }
 
@@ -289,10 +354,14 @@ function goToSection(target) {
   const outDir = inDir;
   const outEl = contents[current];
   const inEl = contents[target];
-  const inFrom = offsetFor(inDir);
-  const outTo = offsetFor(outDir);
 
-  gsap.set(inEl, { x: inFrom.x, y: inFrom.y, opacity: 0, filter: 'blur(8px)' });
+  gsap.set(inEl, { x: 0, y: 0, opacity: 0, filter: 'blur(0px)' });
+  gsap.set(outEl, { opacity: 1 });
+
+  // Pre-populate testimonials so cards exist in DOM before the fly-in animation
+  if (sections[target].id === 'testimony') {
+    updateTestimonials();
+  }
 
   const tl = gsap.timeline({
     defaults: { ease: 'power3.inOut' },
@@ -315,23 +384,21 @@ function goToSection(target) {
       const currentSectionId = sections[current].id;
       if (currentSectionId === 'testimony') animateTestimonialsIn();
       if (currentSectionId === 'contact') animateContactIn();
+
+      // Show/hide resume download button
+      const resumeBtn = document.getElementById('resumeDownloadBtn');
+      if (resumeBtn) {
+        resumeBtn.classList.toggle('visible', currentSectionId === 'contact');
+      }
     }
   });
 
-  // Animation sequence: randomize → move sections → restore
-  tl.add(animateChildrenToRandom(outEl), 0);
-  tl.to(outEl, {
-    x: outTo.x, y: outTo.y, opacity: 0, filter: 'blur(10px)',
-    duration: 0.4
-  }, 0.1);
-  tl.to(inEl, {
-    x: 0, y: 0, opacity: 1, filter: 'blur(0px)',
-    duration: CHILD_ANIMATION_DURATION
-  }, 0.2);
-  tl.add(animateChildrenToOriginal(inEl), 0.3);
-  tl.fromTo(inEl, 
-    { rotateX: inDir === 'up' || inDir === 'down' ? 5 : 0, rotateY: inDir === 'left' || inDir === 'right' ? 5 : 0, transformOrigin: '50% 50%' },
-    { rotateX: 0, rotateY: 0, duration: CHILD_ANIMATION_DURATION }, 0.2);
+  // Children scatter out individually, then incoming children fly in
+  tl.add(animateChildrenToRandom(outEl, outDir), 0);
+  // Fade the container out AFTER children have scattered (don't cut them off)
+  tl.to(outEl, { opacity: 0, duration: 0.15, ease: 'none' }, TRANSITION_DURATION + 0.1);
+  tl.to(inEl, { opacity: 1, filter: 'blur(0px)', duration: 0.15, ease: 'none' }, TRANSITION_DURATION + 0.1);
+  tl.add(animateChildrenToOriginal(inEl), TRANSITION_DURATION + 0.15);
 }
 
 function updateNavButtons() {
@@ -525,6 +592,9 @@ skills.forEach(s => {
   b.appendChild(document.createTextNode(s.name));
 
   b.addEventListener('click', () => {
+    // Stop the placeholder loop when a skill is selected
+    stopSkillPlaceholderLoop();
+
     // Remove active class from all buttons
     document.querySelectorAll('.skill-grid button').forEach(btn => btn.classList.remove('active'));
     
@@ -536,7 +606,10 @@ skills.forEach(s => {
     vbarSkill.textContent = s.name;
     vbarValue.textContent = `${val}/10`;
     
-    // Update description with typing animation
+    // Clear placeholder then type description
+    skillsDescription.innerHTML = '';
+    skillsDescription.style.alignItems = 'flex-start';
+    skillsDescription.style.justifyContent = 'flex-start';
     typeText(skillsDescription, s.desc, 2);
 
     // Update progress bar colors based on usage
@@ -572,15 +645,151 @@ skills.forEach(s => {
   skillGrid.appendChild(b);
 });
 
-// Initialize with HTML skill active
-function initializeSkills() {
-  const htmlSkill = skills.find(s => s.name === 'HTML');
-  if (htmlSkill) {
-    const htmlButton = Array.from(skillGrid.children).find(btn => btn.textContent.includes('HTML'));
-    if (htmlButton) {
-      htmlButton.click();
+// ============================================================================
+// SKILL PLACEHOLDER LOOP
+// ============================================================================
+
+let skillPlaceholderLoop = null;
+let skillPlaceholderActive = false;
+
+async function typeSkillName(el, text, speed = 80) {
+  el.textContent = '';
+  for (const ch of text) {
+    el.textContent += ch;
+    await sleep(speed);
+  }
+}
+
+async function deleteSkillName(el, speed = 40) {
+  const text = el.textContent;
+  for (let i = text.length; i >= 0; i--) {
+    el.textContent = text.substring(0, i);
+    await sleep(speed);
+  }
+}
+
+function pulseSkillButton(skillName) {
+  const buttons = document.querySelectorAll('.skill-grid button');
+  for (const btn of buttons) {
+    // Match by text content (last text node)
+    const btnName = btn.childNodes[btn.childNodes.length - 1].textContent.trim();
+    if (btnName === skillName) {
+      btn.classList.add('placeholder-pulse');
+      setTimeout(() => btn.classList.remove('placeholder-pulse'), 900);
+      break;
     }
   }
+}
+
+function spawnFloatingSkillIcon(skillLogo) {
+  const icon = document.createElement('img');
+  icon.src = skillLogo;
+  icon.className = 'floating-skill-icon';
+  
+  // Random position within 30-70% of the skill description box
+  const randomX = Math.random() * 40 + 30; // 30% to 70%
+  const randomY = Math.random() * 40 + 30; // 30% to 70%
+  
+  // Random size between 40px and 100px
+  const randomSize = Math.random() * 60 + 40;
+  
+  icon.style.left = `${randomX}%`;
+  icon.style.top = `${randomY}%`;
+  icon.style.width = `${randomSize}px`;
+  icon.style.height = `${randomSize}px`;
+  
+  skillsDescription.appendChild(icon);
+  
+  const totalDuration = 2300; // Total animation time in ms
+  const fadeInDuration = totalDuration / 2000; // Convert to seconds for GSAP
+  const fadeOutDuration = totalDuration / 2000;
+  
+  // Fade in slowly
+  gsap.to(icon, {
+    opacity: 0.3,
+    duration: fadeInDuration,
+    ease: 'power1.inOut'
+  });
+  
+  // Fade out immediately after fade in completes (no delay)
+  setTimeout(() => {
+    gsap.to(icon, {
+      opacity: 0,
+      duration: fadeOutDuration,
+      ease: 'power1.inOut',
+      onComplete: () => icon.remove()
+    });
+  }, totalDuration / 2);
+}
+
+async function runSkillPlaceholderLoop() {
+  skillPlaceholderActive = true;
+
+  // Build a shuffled index list
+  const indices = skills.map((_, i) => i);
+  // Fisher-Yates shuffle
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+
+  let pos = 0;
+
+  while (skillPlaceholderActive) {
+    const idx = indices[pos % indices.length];
+    pos++;
+    if (pos >= indices.length) {
+      // Reshuffle for next round
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      pos = 0;
+    }
+
+    const skillName = skills[idx].name;
+    const skillLogo = skills[idx].logo;
+
+    // Update placeholder prefix text
+    const placeholder = skillsDescription.querySelector('.skill-placeholder');
+    if (!placeholder || !skillPlaceholderActive) break;
+
+    const nameSpan = placeholder.querySelector('.skill-placeholder-name');
+    if (!nameSpan || !skillPlaceholderActive) break;
+
+    // Pulse the corresponding button
+    pulseSkillButton(skillName);
+    
+    // Spawn floating icon
+    spawnFloatingSkillIcon(skillLogo);
+
+    // Type the skill name
+    await typeSkillName(nameSpan, skillName, 80);
+    if (!skillPlaceholderActive) break;
+
+    await sleep(1000);
+    if (!skillPlaceholderActive) break;
+
+    // Delete the skill name
+    await deleteSkillName(nameSpan, 40);
+    if (!skillPlaceholderActive) break;
+
+    await sleep(300);
+  }
+}
+
+function stopSkillPlaceholderLoop() {
+  skillPlaceholderActive = false;
+}
+
+function initializeSkills() {
+  // Rebuild placeholder HTML to include a span for the animated skill name
+  skillsDescription.innerHTML = `
+    <div class="skill-placeholder">
+      <span class="skill-placeholder-line">Click on <span class="skill-placeholder-name"></span></span>
+    </div>
+  `;
+  runSkillPlaceholderLoop();
 }
 
 // PROJECTS SECTION: Generate bento grid
@@ -839,28 +1048,32 @@ function updateTestimonials() {
   if (!grid) return;
   
   const currentTestimonials = [];
-  
-  for (let i = 0; i < TESTIMONIALS_PER_PAGE; i++) {
+  for (let i = 0; i < getTestimonialsPerPage(); i++) {
     const index = (currentTestimonyIndex + i) % testimony.length;
     currentTestimonials.push(testimony[index]);
   }
   
+  grid.innerHTML = currentTestimonials.map(createTestimonialCard).join('');
+}
+
+function updateTestimonialsWithFade() {
+  const grid = document.getElementById('testimonialsGrid');
+  if (!grid) return;
+  
   const tl = gsap.timeline();
   tl.to(grid, { opacity: 0, duration: 0.3 })
-    .call(() => {
-      grid.innerHTML = currentTestimonials.map(createTestimonialCard).join('');
-    })
+    .call(() => { updateTestimonials(); })
     .to(grid, { opacity: 1, duration: 0.3 });
 }
 
 function nextTestimonials() {
-  currentTestimonyIndex = (currentTestimonyIndex + TESTIMONIALS_PER_PAGE) % testimony.length;
-  updateTestimonials();
+  currentTestimonyIndex = (currentTestimonyIndex + getTestimonialsPerPage()) % testimony.length;
+  updateTestimonialsWithFade();
 }
 
 function prevTestimonials() {
-  currentTestimonyIndex = (currentTestimonyIndex - TESTIMONIALS_PER_PAGE + testimony.length) % testimony.length;
-  updateTestimonials();
+  currentTestimonyIndex = (currentTestimonyIndex - getTestimonialsPerPage() + testimony.length) % testimony.length;
+  updateTestimonialsWithFade();
 }
 
 function initTestimonialsControls() {
@@ -872,7 +1085,6 @@ function initTestimonialsControls() {
 }
 
 function animateTestimonialsIn() {
-  updateTestimonials();
   initTestimonialsControls();
 }
 

@@ -219,16 +219,21 @@ html, body {
 
 /* Skills description box */
 .skills-description {
+  position: relative;
   border-left: 1px solid #7c3aed;
   border-right: 1px solid #7c3aed;
   padding: 24px;
   color: #f1f5f9;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 2.25;
   backdrop-filter: blur(10px);
   align-self: start;
   height: 350px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Bitcount Single', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 @media (min-width: 973px) and (max-width: 1360px) {
@@ -1181,4 +1186,107 @@ body::before {
     width: 95vw;
     padding: 20px;
   }
+}
+
+/* Download Resume Button */
+.resume-download-fixed {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.resume-download-fixed.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.download-resume-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+}
+
+.download-resume-btn:hover {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+}
+
+.download-resume-btn:active {
+  transform: translateY(0);
+}
+
+.download-resume-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #fff;
+}
+
+/* Skills description placeholder */
+.skill-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.6rem;
+  color: rgba(196, 181, 253, 0.75);
+  font-size: 1.3rem;
+  font-style: italic;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+.skill-placeholder-sub {
+  font-size: 1.1rem;
+  font-style: normal;
+  color: rgba(147, 51, 234, 0.85);
+  letter-spacing: 0.05em;
+}
+
+.skill-placeholder-name {
+  letter-spacing: 0.06em;
+  min-height: 1.4em;
+  display: inline;
+}
+
+.skill-placeholder-line {
+  display: block;
+  white-space: nowrap;
+}
+
+@keyframes skillBtnPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(196, 181, 253, 0.7); transform: scale(1); }
+  40%  { box-shadow: 0 0 0 8px rgba(196, 181, 253, 0); transform: scale(1.08); }
+  55%  { transform: scale(1); }
+  75%  { box-shadow: 0 0 0 0 rgba(196, 181, 253, 0.5); transform: scale(1.06); }
+  100% { box-shadow: 0 0 0 8px rgba(196, 181, 253, 0); transform: scale(1); }
+}
+
+.skill-grid button.placeholder-pulse {
+  animation: skillBtnPulse 0.9s ease-out;
+}
+
+.floating-skill-icon {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  object-fit: contain;
+  z-index: 1;
+  filter: grayscale(0.3) brightness(0.9);
 }
