@@ -120,7 +120,38 @@
           <strong>Languages used:</strong>
           <div id="modalLanguages"></div>
         </div>
-        <a href="#" class="visitBtn" id="visitBtn" target="_blank">Visit Site >><span>!!!Under Construction...</span></a>
+        <a href="#" class="visitBtn" id="visitBtn" target="_blank">Visit Site >></a>
+      </div>
+    </div>
+
+    <!-- Snake Game Modal -->
+    <div id="snakeGameModal" class="modal snake-game-modal">
+      <div class="snake-game-container">
+        <span class="close snake-close">&times;</span>
+        <h1>🐍 Snake Game</h1>
+        
+        <div class="score-board">
+          <div class="score-item">Score: <span id="snakeScore">0</span></div>
+          <div class="score-item">High Score: <span id="snakeHighScore">0</span></div>
+        </div>
+
+        <canvas id="snakeCanvas" width="400" height="400"></canvas>
+
+        <div class="snake-controls">
+          <button id="snakeStartBtn">Start Game</button>
+          <button id="snakePauseBtn">Pause</button>
+          <button id="snakeResetBtn">Reset</button>
+        </div>
+
+        <div class="snake-instructions">
+          Use Arrow Keys or WASD to control the snake
+        </div>
+      </div>
+
+      <div class="snake-game-over" id="snakeGameOver">
+        <h2>Game Over!</h2>
+        <p>Your Score: <span id="snakeFinalScore">0</span></p>
+        <button id="snakeRestartBtn">Play Again</button>
       </div>
     </div>
 
